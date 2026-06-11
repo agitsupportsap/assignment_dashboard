@@ -1,8 +1,13 @@
-/* ═══════════════════════════════════════════
-   FULL SCREEN — pastikan app mengisi viewport
-   ═══════════════════════════════════════════ */
-html,
-body {
+/* ════════════════════════════════════════════════════════════
+   ZTK OPS DASHBOARD — Modern Theme
+   Palette:
+     bg        #eef1f6   surface #ffffff   ink #16212e
+     accent    #4f46e5 (indigo)
+     success   #16a34a   warning #d97706
+     danger    #dc2626   info    #0284c7
+   ════════════════════════════════════════════════════════════ */
+
+html, body {
     height: 100%;
     width: 100%;
     margin: 0;
@@ -10,134 +15,481 @@ body {
     overflow: hidden;
 }
 
-/* ToolPage & wrapper harus full tinggi */
 .sapTntToolPage,
 .sapTntToolPageWrapper,
 .sapTntToolPageContentWrapper {
     height: 100% !important;
 }
 
-/* Page scroll container full width */
 .sapMPage > .sapMScrollCont {
     width: 100%;
     box-sizing: border-box;
 }
 
-/* ═══════════════════════════════════════════
-   DASHBOARD WRAPPER — padding minimal
-   ═══════════════════════════════════════════ */
+/* ── Canvas ─────────────────────────────────────────────── */
 .dashboardWrapper {
-    padding: 0.75rem 1rem 1rem 1rem;
+    padding: 1rem 1.25rem 1.5rem 1.25rem;
     box-sizing: border-box;
     width: 100%;
+    min-height: 100%;
+    background:
+        radial-gradient(1200px 400px at 85% -10%, rgba(79,70,229,0.06), transparent 60%),
+        #eef1f6;
 }
 
-/* ═══════════════════════════════════════════
-   KPI GRID — compact cards baris atas
-   ═══════════════════════════════════════════ */
+/* ════════════════════════════════════════════════════════════
+   KPI CARDS
+   ════════════════════════════════════════════════════════════ */
 .kpiGrid {
     width: 100% !important;
-    margin-bottom: 0.75rem !important;
+    margin-bottom: 1rem !important;
 }
 
-/* Card container */
 .kpiCard {
-    background-color: #ffffff;
-    border-radius: 0.5rem;
-    padding: 0.625rem 1rem 0.75rem 1rem;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.10);
+    position: relative;
+    background: #ffffff;
+    border: 1px solid rgba(22, 33, 46, 0.06);
+    border-radius: 14px;
+    padding: 1rem 1.125rem 1.125rem 1.125rem;
     box-sizing: border-box;
     width: 100%;
+    box-shadow:
+        0 1px 2px rgba(22, 33, 46, 0.04),
+        0 8px 24px -12px rgba(22, 33, 46, 0.10);
+    transition: transform .18s ease, box-shadow .18s ease;
+    overflow: hidden;
 }
 
-/* Label atas (judul KPI) */
+.kpiCard:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 2px 4px rgba(22, 33, 46, 0.05),
+        0 16px 32px -12px rgba(22, 33, 46, 0.16);
+}
+
+/* Accent top bar per card color */
+.kpiCard::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--kpi-accent, #4f46e5);
+    opacity: .9;
+}
+
+.kpiAccentGreen  { --kpi-accent: #16a34a; }
+.kpiAccentAmber  { --kpi-accent: #d97706; }
+.kpiAccentIndigo { --kpi-accent: #4f46e5; }
+.kpiAccentRed    { --kpi-accent: #dc2626; }
+
+/* Icon chip */
+.kpiIconChip {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: .625rem;
+    background: color-mix(in srgb, var(--kpi-accent, #4f46e5) 12%, white);
+}
+.kpiIconChip .sapUiIcon {
+    font-size: 1.125rem;
+    color: var(--kpi-accent, #4f46e5);
+}
+/* fallback when color-mix unsupported */
+@supports not (background: color-mix(in srgb, red 10%, white)) {
+    .kpiIconChip { background: rgba(79, 70, 229, 0.10); }
+}
+
 .kpiCardLabel.sapMLbl {
-    font-size: 0.8125rem !important;
+    font-size: .8125rem !important;
     font-weight: 600 !important;
-    color: #32363a !important;
+    color: #16212e !important;
+    letter-spacing: .01em;
     line-height: 1.3 !important;
 }
 
-/* Subtext (keterangan kecil) */
 .kpiCardSub.sapMText {
-    font-size: 0.75rem !important;
-    color: #6a6d70 !important;
-    margin-bottom: 0.35rem !important;
-    line-height: 1.2 !important;
+    font-size: .71875rem !important;
+    color: #7b8794 !important;
+    line-height: 1.25 !important;
+    margin-bottom: .375rem !important;
 }
 
-/* Angka KPI — besar & berwarna */
 .kpiCardValue.sapMObjStatus .sapMObjStatusText {
-    font-size: 1.75rem !important;
+    font-size: 2.125rem !important;
+    font-weight: 800 !important;
+    line-height: 1.05 !important;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+}
+.kpiCardValue.sapMObjStatus .sapMObjStatusIcon { display: none !important; }
+
+/* ════════════════════════════════════════════════════════════
+   PANELS
+   ════════════════════════════════════════════════════════════ */
+.dashboardPanel {
+    background: #ffffff !important;
+    border: 1px solid rgba(22, 33, 46, 0.06) !important;
+    border-radius: 14px !important;
+    box-shadow:
+        0 1px 2px rgba(22, 33, 46, 0.04),
+        0 8px 24px -14px rgba(22, 33, 46, 0.10) !important;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.dashboardPanel .sapMPanelContent { padding: 0 !important; }
+
+.dashboardPanelToolbar {
+    background: #ffffff !important;
+    border-bottom: 1px solid #eef0f3 !important;
+    padding: 0 .75rem 0 1rem !important;
+    min-height: 3rem !important;
+}
+
+.dashboardPanelToolbar .sapMTitle {
+    font-size: .875rem !important;
     font-weight: 700 !important;
-    line-height: 1.1 !important;
+    color: #16212e !important;
+    letter-spacing: .005em;
 }
 
-/* Hilangkan icon ObjectStatus (hanya teks) */
-.kpiCardValue.sapMObjStatus .sapMObjStatusIcon {
-    display: none !important;
+/* small colored dot before panel titles */
+.panelDot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    margin-right: .5rem;
+    flex-shrink: 0;
+}
+.panelDotIndigo { background: #4f46e5; }
+.panelDotGreen  { background: #16a34a; }
+.panelDotAmber  { background: #d97706; }
+.panelDotRed    { background: #dc2626; }
+.panelDotSky    { background: #0284c7; }
+
+/* count chip in panel header */
+.panelChip.sapMObjStatus .sapMObjStatusText {
+    font-size: .71875rem !important;
+    font-weight: 600 !important;
 }
 
-/* ═══════════════════════════════════════════
-   MAIN GRID — konten utama (kiri + kanan)
-   ═══════════════════════════════════════════ */
-.mainGrid {
+/* ════════════════════════════════════════════════════════════
+   TABLES
+   ════════════════════════════════════════════════════════════ */
+#tblSupport, #tblCR, #tblBacklog, #tblCustomer, #tblLeader {
     width: 100% !important;
 }
 
-/* Kolom kiri & kanan selalu box-sizing border-box */
-.leftColumn,
-.rightColumn {
-    box-sizing: border-box;
+.sapMListTbl .sapMListTblHeader {
+    background: #f8f9fb !important;
+}
+.sapMListTbl .sapMListTblHeaderCell {
+    font-weight: 600 !important;
+    font-size: .6875rem !important;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: #7b8794 !important;
+    padding-top: .625rem !important;
+    padding-bottom: .625rem !important;
+}
+
+.sapMListTbl .sapMLIB {
+    border-bottom: 1px solid #f1f3f6 !important;
+    transition: background .12s ease;
+}
+.sapMListTbl .sapMLIB:hover {
+    background: #f7f8ff !important;
+}
+
+.sapMListTbl .sapMListTblCell {
+    padding-top: .625rem !important;
+    padding-bottom: .625rem !important;
+    font-size: .8125rem;
+}
+
+/* status pills */
+.sapMListTbl .sapMObjStatusInverted .sapMObjStatusText {
+    border-radius: 999px !important;
+    padding: .125rem .625rem !important;
+    font-size: .6875rem !important;
+    font-weight: 600 !important;
+    letter-spacing: .02em;
+}
+
+/* description cell */
+.tableDescCell.sapMText {
+    white-space: normal !important;
+    word-break: break-word;
+    line-height: 1.45;
+    font-size: .8125rem;
+    color: #4a5560;
+}
+
+.cellConsName.sapMText {
+    font-size: .8125rem;
+    font-weight: 500;
+    color: #16212e;
+}
+
+/* ticket id links */
+.sapMListTbl .sapMLnk {
+    font-weight: 700;
+    font-size: .8125rem;
+    font-variant-numeric: tabular-nums;
+    color: #4f46e5 !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   MINI LISTS (New Tickets / Standby)
+   ════════════════════════════════════════════════════════════ */
+#lstNewTickets .sapMLIB, #lstStandby .sapMLIB {
+    min-height: 0 !important;
+    padding: 0 !important;
+    border-bottom: none !important;
+}
+#lstNewTickets .sapMLIBContent, #lstStandby .sapMLIBContent {
+    padding: 0 !important;
     width: 100%;
 }
 
-/* Sedikit gap antara kiri dan kanan */
-.leftColumn {
-    padding-right: 0.25rem;
-}
-
-.rightColumn {
-    padding-left: 0.25rem;
-}
-
-/* ═══════════════════════════════════════════
-   PANEL — pastikan full width & rapi
-   ═══════════════════════════════════════════ */
-#panelSupport,
-#panelCR,
-#panelBacklog,
-#panelNewTickets,
-#panelStandby {
-    width: 100% !important;
+.miniItem {
+    padding: .5625rem 1rem;
     box-sizing: border-box;
+    overflow: hidden;
+    border-bottom: 1px solid #f1f3f6;
+    transition: background .12s ease;
+}
+.miniItem:hover { background: #f7f8ff; }
+
+.miniItemBadge { margin-right: .625rem; flex-shrink: 0; }
+.miniItemBadge .sapMObjStatusText {
+    border-radius: 6px !important;
+    padding: .0625rem .4375rem !important;
+    font-size: .65625rem !important;
+    font-weight: 700 !important;
 }
 
-/* ═══════════════════════════════════════════
-   TABLE — kolom tidak terpotong
-   ═══════════════════════════════════════════ */
-#tblSupport,
-#tblCR,
-#tblBacklog {
-    width: 100% !important;
-    table-layout: auto;
-}
-
-/* ═══════════════════════════════════════════
-   NEW TICKETS LIST — deskripsi tidak terpotong
-   ═══════════════════════════════════════════ */
-#lstNewTickets .sapMSLIDescriptionText {
-    white-space: normal;
-    word-break: break-word;
-}
-
-#lstNewTickets .sapMSLITitle {
-    font-weight: 600;
-}
-
-/* Info (jam) rata kanan dan tidak terpotong */
-#lstNewTickets .sapMSLIInfo {
-    flex-shrink: 0;
+.miniItemTitle.sapMText {
+    font-size: .8125rem !important;
+    line-height: 1.45 !important;
+    color: #16212e;
+    overflow: hidden;
+    text-overflow: ellipsis;
     white-space: nowrap;
 }
 
+.miniItemSide.sapMText, .miniItemMod.sapMText {
+    font-size: .71875rem !important;
+    color: #7b8794;
+    flex-shrink: 0;
+    margin-left: .625rem;
+    white-space: nowrap;
+    font-weight: 500;
+}
+.miniItemMod.sapMText { margin-right: .625rem; margin-left: 0; }
+
+.miniItemStatus .sapMObjStatusText {
+    font-size: .71875rem !important;
+    font-weight: 600 !important;
+}
+
+/* consultant initials circle (standby) */
+.initialsChip {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #eef0ff, #e2e6ff);
+    color: #4f46e5;
+    font-size: .6875rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: .625rem;
+    flex-shrink: 0;
+    letter-spacing: .02em;
+}
+
+/* ════════════════════════════════════════════════════════════
+   VIEW 2 — SLA + LEADERBOARD
+   ════════════════════════════════════════════════════════════ */
+.multiLineSub.sapMText {
+    white-space: pre-line !important;
+    line-height: 1.25 !important;
+}
+
+/* progress bars: slim & rounded */
+.sapMPI {
+    border-radius: 999px !important;
+    overflow: hidden;
+    background: #eef0f3 !important;
+    border: none !important;
+}
+.sapMPIBar { border-radius: 999px !important; }
+.sapMListTbl .sapMPI { height: 10px !important; }
+.sapMListTbl .sapMPI .sapMPIText { display: none !important; }
+#piSla { height: 14px !important; }
+#piSla .sapMPIText {
+    font-size: .6875rem !important;
+    font-weight: 600 !important;
+}
+
+/* leaderboard rank medal */
+.rankMedal {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .75rem;
+    font-weight: 800;
+    margin: 0 auto;
+    font-variant-numeric: tabular-nums;
+}
+.rankGold   { background: linear-gradient(135deg,#fde68a,#f59e0b); color: #7c4a03; box-shadow: 0 2px 6px rgba(245,158,11,.35); }
+.rankSilver { background: linear-gradient(135deg,#e5e7eb,#9ca3af); color: #374151; }
+.rankBronze { background: linear-gradient(135deg,#fed7aa,#ea8a3c); color: #7c3a03; }
+.rankPlain  { background: #f1f3f6; color: #7b8794; }
+
+/* leaderboard credit total emphasis */
+.creditTotal .sapMObjStatusText {
+    font-size: .9375rem !important;
+    font-weight: 800 !important;
+    font-variant-numeric: tabular-nums;
+    color: #b45309 !important;
+}
+
+/* leaderboard consultant cell */
+.leaderName.sapMText {
+    font-weight: 600;
+    color: #16212e;
+}
+.leaderAvg.sapMText, .leaderTickets.sapMText {
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+    color: #4a5560;
+}
+
+/* SLA big numbers */
+#valSlaWithin .sapMObjStatusText,
+#valSlaBreach .sapMObjStatusText,
+#valSlaAvg .sapMObjStatusText {
+    font-size: 1.5rem !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.01em;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Finished breakdown numbers */
+#valFinSup .sapMObjStatusText,
+#valFinCr .sapMObjStatusText,
+#valFinAvg .sapMObjStatusText {
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    font-variant-numeric: tabular-nums;
+}
+
+/* scroll containers softer */
+.sapMScrollContV { scrollbar-width: thin; }
+
+/* ════════════════════════════════════════════════════════════
+   RESPONSIVE — TABLET  (600 – 1023 px)
+   ════════════════════════════════════════════════════════════ */
+@media (max-width: 1023px) {
+    .dashboardWrapper {
+        padding: .75rem .875rem 1.25rem .875rem;
+    }
+    .kpiCardValue.sapMObjStatus .sapMObjStatusText {
+        font-size: 1.75rem !important;
+    }
+    #scNewTickets,
+    #scStandby {
+        height: 220px !important;
+    }
+    #vbSla.sapMVBox {
+        margin: .75rem !important;
+    }
+    /* SLA stats: allow wrap on narrow tablet */
+    #hbSlaTop.sapMHBox {
+        flex-wrap: wrap !important;
+        gap: .5rem;
+    }
+}
+
+/* ════════════════════════════════════════════════════════════
+   RESPONSIVE — PHONE  (< 600 px)
+   ════════════════════════════════════════════════════════════ */
+@media (max-width: 599px) {
+    /* Canvas */
+    .dashboardWrapper {
+        padding: .5rem .625rem 1rem .625rem;
+    }
+    .kpiGrid {
+        margin-bottom: .625rem !important;
+    }
+
+    /* KPI cards: compact */
+    .kpiCard {
+        padding: .625rem .75rem .75rem .75rem;
+        border-radius: 10px !important;
+    }
+    .kpiIconChip {
+        width: 28px !important;
+        height: 28px !important;
+        border-radius: 8px !important;
+        margin-bottom: .375rem;
+    }
+    .kpiIconChip .sapUiIcon { font-size: .9375rem; }
+    .kpiCardValue.sapMObjStatus .sapMObjStatusText {
+        font-size: 1.375rem !important;
+    }
+
+    /* Hide CR panel — leave full width for Support */
+    #panelCR { display: none !important; }
+
+    /* Scroll lists: shorter */
+    #scNewTickets,
+    #scStandby {
+        height: 190px !important;
+    }
+
+    /* Panels: tighter radius */
+    .dashboardPanel {
+        border-radius: 10px !important;
+    }
+    .sapUiSmallMarginBottom {
+        margin-bottom: .625rem !important;
+    }
+
+    /* Table cells: slightly smaller */
+    .sapMListTbl .sapMListTblCell {
+        padding-top: .4375rem !important;
+        padding-bottom: .4375rem !important;
+    }
+
+    /* View 2: SLA stats wrap vertically */
+    #hbSlaTop.sapMHBox {
+        flex-wrap: wrap !important;
+        gap: .625rem;
+    }
+    #hbSlaTop.sapMHBox > .sapMVBox {
+        min-width: 42%;
+    }
+    #vbSla.sapMVBox {
+        margin: .625rem !important;
+    }
+
+    /* View 2: leaderboard initials chip smaller */
+    .initialsChip {
+        width: 24px !important;
+        height: 24px !important;
+        font-size: .625rem !important;
+        margin-right: .375rem !important;
+    }
+
+    /* Finished breakdown: compact */
+    #hbFinishedBreakdown.sapMHBox {
+        gap: .75rem;
+    }
+}

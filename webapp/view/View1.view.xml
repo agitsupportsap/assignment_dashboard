@@ -10,232 +10,254 @@
         <content>
             <VBox id="vbMain" class="dashboardWrapper">
 
-                <!-- ═══ KPI TILES ROW ═══ -->
-                <l:Grid id="gridKpi"
-                    defaultSpan="L3 M6 S12"
-                    hSpacing="1"
-                    vSpacing="0"
-                    class="kpiGrid">
+                <!-- ═══ KPI TILES ═══ -->
+                <l:Grid id="gridKpi" defaultSpan="L3 M6 S6" hSpacing="1" vSpacing="0" class="kpiGrid">
 
-                    <VBox id="kpiCard1" class="kpiCard">
+                    <VBox id="kpiCard1" class="kpiCard kpiAccentIndigo">
+                        <HBox id="kpiChip1" class="kpiIconChip" justifyContent="Center" alignItems="Center">
+                            <core:Icon id="kpiIcon1" src="sap-icon://activity-2"/>
+                        </HBox>
                         <Label id="kpiLbl1" text="Ongoing Tasks" class="kpiCardLabel"/>
                         <Text id="kpiSub1" text="active assignments" class="kpiCardSub"/>
-                        <ObjectStatus id="kpiVal1" text="42" state="Success" class="kpiCardValue"/>
+                        <ObjectStatus id="kpiVal1" text="{kpi>/ongoing}" state="Information" class="kpiCardValue"/>
                     </VBox>
 
-                    <VBox id="kpiCard2" class="kpiCard">
+                    <VBox id="kpiCard2" class="kpiCard kpiAccentAmber">
+                        <HBox id="kpiChip2" class="kpiIconChip" justifyContent="Center" alignItems="Center">
+                            <core:Icon id="kpiIcon2" src="sap-icon://pending"/>
+                        </HBox>
                         <Label id="kpiLbl2" text="Pending" class="kpiCardLabel"/>
                         <Text id="kpiSub2" text="awaiting action" class="kpiCardSub"/>
-                        <ObjectStatus id="kpiVal2" text="17" state="Warning" class="kpiCardValue"/>
+                        <ObjectStatus id="kpiVal2" text="{kpi>/pending}" state="Warning" class="kpiCardValue"/>
                     </VBox>
 
-                    <VBox id="kpiCard3" class="kpiCard">
+                    <VBox id="kpiCard3" class="kpiCard kpiAccentGreen">
+                        <HBox id="kpiChip3" class="kpiIconChip" justifyContent="Center" alignItems="Center">
+                            <core:Icon id="kpiIcon3" src="sap-icon://employee-approvals"/>
+                        </HBox>
                         <Label id="kpiLbl3" text="Standby" class="kpiCardLabel"/>
                         <Text id="kpiSub3" text="people available" class="kpiCardSub"/>
-                        <ObjectStatus id="kpiVal3" text="5" state="Success" class="kpiCardValue"/>
+                        <ObjectStatus id="kpiVal3" text="{kpi>/standby}" state="Success" class="kpiCardValue"/>
                     </VBox>
 
-                    <VBox id="kpiCard4" class="kpiCard">
+                    <VBox id="kpiCard4" class="kpiCard kpiAccentRed">
+                        <HBox id="kpiChip4" class="kpiIconChip" justifyContent="Center" alignItems="Center">
+                            <core:Icon id="kpiIcon4" src="sap-icon://alert"/>
+                        </HBox>
                         <Label id="kpiLbl4" text="Overdue" class="kpiCardLabel"/>
                         <Text id="kpiSub4" text="past due date" class="kpiCardSub"/>
-                        <ObjectStatus id="kpiVal4" text="3" state="Error" class="kpiCardValue"/>
+                        <ObjectStatus id="kpiVal4" text="{kpi>/overdue}" state="Error" class="kpiCardValue"/>
                     </VBox>
 
                 </l:Grid>
 
-                <!-- ═══ MAIN CONTENT GRID ═══ -->
-                <l:Grid id="gridMain" hSpacing="1" vSpacing="0" class="mainGrid">
+                <!-- ═══ SUPPORT + CR ═══ -->
+                <l:Grid id="gridAssignments" defaultSpan="L6 M12 S12" hSpacing="1" vSpacing="0" class="sapUiSmallMarginBottom">
 
-                    <!-- ─── LEFT COLUMN ─── -->
-                    <VBox id="vbLeft" class="leftColumn">
-                        <layoutData>
-                            <l:GridData id="gdLeft" span="L8 M8 S12"/>
-                        </layoutData>
+                    <Panel id="panelSupport" width="100%" class="dashboardPanel">
+                        <headerToolbar>
+                            <Toolbar id="tbSupport" class="dashboardPanelToolbar">
+                                <HBox id="hbSupDot" class="panelDot panelDotSky"/>
+                                <Title id="titleSupport" text="Support Assignments" level="H3"/>
+                                <ToolbarSpacer id="tsSupport"/>
+                                <ObjectStatus id="osSupCount" text="{kpi>/supCount} active" state="Information" class="panelChip"/>
+                            </Toolbar>
+                        </headerToolbar>
+                        <Table id="tblSupport" inset="false" fixedLayout="false" width="100%"
+                            sticky="ColumnHeaders" alternateRowColors="false"
+                            items="{
+                                path: '/TicketSet',
+                                filters: [
+                                    {path: 'Type', operator: 'EQ', value1: 'SUP'},
+                                    {path: 'Status', operator: 'NE', value1: 'NW'},
+                                    {path: 'Status', operator: 'NE', value1: 'CL'}
+                                ],
+                                sorter: { path: 'CreatedAt', descending: true }
+                            }">
+                            <columns>
+                                <Column id="colSupTicket" width="92px"><Text id="txtSupTicket" text="Ticket"/></Column>
+                                <Column id="colSupName" width="150px" minScreenWidth="Phone" demandPopin="true"><Text id="txtSupName" text="Consultant"/></Column>
+                                <Column id="colSupDesc" minScreenWidth="Tablet" demandPopin="true"><Text id="txtSupDesc" text="Description"/></Column>
+                                <Column id="colSupStatus" hAlign="Center" width="90px"><Text id="txtSupStatus" text="Status"/></Column>
+                                <Column id="colSupCust" width="100px" hAlign="Center" minScreenWidth="Tablet" demandPopin="true"><Text id="txtSupCust" text="Cust"/></Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem id="cliSupTemplate" vAlign="Top">
+                                    <cells>
+                                        <Link id="lnkSupTicket" text="{TicketId}" emphasized="true"/>
+                                        <Text id="txtSupNameTpl"
+                                            text="{parts: [{path: 'ConsId'}, {path: 'ModuleId'}], formatter: '.formatConsName'}"
+                                            class="cellConsName"/>
+                                        <Text id="txtSupDescTpl" text="{Description}" wrapping="true" maxLines="2" class="tableDescCell"/>
+                                        <ObjectStatus id="osSupStatusTpl"
+                                            text="{path:'Status', formatter:'.formatStatusLabel'}"
+                                            state="{path:'Status', formatter:'.formatStatusState'}"
+                                            inverted="true"/>
+                                        <Text id="txtSupCustTpl" text="{CustCode}"/>
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </Panel>
 
-                        <!-- Support & CR side by side -->
-                        <l:Grid id="gridAssignments"
-                            defaultSpan="L6 M6 S12"
-                            hSpacing="1"
-                            vSpacing="0"
-                            class="sapUiSmallMarginBottom">
+                    <Panel id="panelCR" width="100%" class="dashboardPanel">
+                        <headerToolbar>
+                            <Toolbar id="tbCR" class="dashboardPanelToolbar">
+                                <HBox id="hbCRDot" class="panelDot panelDotAmber"/>
+                                <Title id="titleCR" text="Change Request Assignments" level="H3"/>
+                                <ToolbarSpacer id="tsCR"/>
+                                <ObjectStatus id="osCRCount" text="{kpi>/crCount} active" state="Information" class="panelChip"/>
+                            </Toolbar>
+                        </headerToolbar>
+                        <Table id="tblCR" inset="false" fixedLayout="false" width="100%"
+                            sticky="ColumnHeaders" alternateRowColors="false"
+                            items="{
+                                path: '/TicketSet',
+                                filters: [
+                                    {path: 'Type', operator: 'EQ', value1: 'CR'},
+                                    {path: 'Status', operator: 'NE', value1: 'NW'},
+                                    {path: 'Status', operator: 'NE', value1: 'CL'}
+                                ],
+                                sorter: { path: 'CreatedAt', descending: true }
+                            }">
+                            <columns>
+                                <Column id="colCRTicket" width="92px"><Text id="txtCRTicket" text="Ticket"/></Column>
+                                <Column id="colCRName" width="150px" minScreenWidth="Phone" demandPopin="true"><Text id="txtCRName" text="Consultant"/></Column>
+                                <Column id="colCRDesc" minScreenWidth="Tablet" demandPopin="true"><Text id="txtCRDesc" text="Description"/></Column>
+                                <Column id="colCRStatus" hAlign="Center" width="90px"><Text id="txtCRStatus" text="Status"/></Column>
+                                <Column id="colCRCust" width="100px" hAlign="Center" minScreenWidth="Tablet" demandPopin="true"><Text id="txtCRCust" text="Cust"/></Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem id="cliCRTemplate" vAlign="Top">
+                                    <cells>
+                                        <Link id="lnkCRTicket" text="{TicketId}" emphasized="true"/>
+                                        <Text id="txtCRNameTpl"
+                                            text="{parts: [{path: 'ConsId'}, {path: 'ModuleId'}], formatter: '.formatConsName'}"
+                                            class="cellConsName"/>
+                                        <Text id="txtCRDescTpl" text="{Description}" wrapping="true" maxLines="2" class="tableDescCell"/>
+                                        <ObjectStatus id="osCRStatusTpl"
+                                            text="{path:'Status', formatter:'.formatStatusLabel'}"
+                                            state="{path:'Status', formatter:'.formatStatusState'}"
+                                            inverted="true"/>
+                                        <Text id="txtCRCustTpl" text="{CustCode}"/>
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </Panel>
 
-                            <Panel id="panelSupport" headerText="Support Assignments" width="100%">
-<Table id="tblSupport"
-    inset="false"
-    fixedLayout="false"
-    width="100%"
-    items="{
-        path: '/TicketSet',
-        filters: [
-            {path: 'Type', operator: 'EQ', value1: 'SUP'},
-            {path: 'Status', operator: 'EQ', value1: 'AS'}
-        ]
-    }">
-    <columns>
-        <Column id="colSupName">
-            <Text id="txtSupName" text="Name (Module)"/>
-        </Column>
-        <Column id="colSupTasks" hAlign="Center" width="65px">
-            <Text id="txtSupTasks" text="Tasks"/>
-        </Column>
-        <Column id="colSupCust">
-            <Text id="txtSupCust" text="Customer"/>
-        </Column>
-    </columns>
-    <items>
-        <ColumnListItem id="cliSupTemplate">
-            <cells>
-                <Text id="txtSupNameTpl" text="{ConsId} ({ModuleId})"/>
-                <ObjectStatus id="osSupTasksTpl" text="1" state="Information" inverted="true"/>
-                <Text id="txtSupCustTpl" text="{CustCode}"/>
-            </cells>
-        </ColumnListItem>
-    </items>
-</Table>
-                            </Panel>
+                </l:Grid>
 
-                            <Panel id="panelCR" headerText="Change Request Assignments" width="100%">
-<Table id="tblCR"
-    inset="false"
-    fixedLayout="false"
-    width="100%"
-    items="{
-        path: '/TicketSet',
-        filters: [
-            {path: 'Type', operator: 'EQ', value1: 'CR'},
-            {path: 'Status', operator: 'NE', value1: 'NW'},
-            {path: 'Status', operator: 'NE', value1: 'CL'}
-        ]
-    }">
-    <columns>
-        <Column id="colCRName">
-            <Text id="txtCRName" text="Name (Module)"/>
-        </Column>
-        <Column id="colCRTasks" hAlign="Center" width="65px">
-            <Text id="txtCRTasks" text="Tasks"/>
-        </Column>
-        <Column id="colCRCust">
-            <Text id="txtCRCust" text="Customer"/>
-        </Column>
-    </columns>
-    <items>
-        <ColumnListItem id="cliCRTemplate">
-            <cells>
-                <Text id="txtCRNameTpl" text="{ConsId} ({ModuleId})"/>
-                <ObjectStatus id="osCRTasksTpl" text="1" state="Information" inverted="true"/>
-                <Text id="txtCRCustTpl" text="{CustCode}"/>
-            </cells>
-        </ColumnListItem>
-    </items>
-</Table>
-                            </Panel>
+                <!-- ═══ BACKLOG ═══ -->
+                <Panel id="panelBacklog" width="100%" class="sapUiSmallMarginBottom dashboardPanel">
+                    <headerToolbar>
+                        <Toolbar id="tbBacklog" class="dashboardPanelToolbar">
+                            <HBox id="hbBLDot" class="panelDot panelDotRed"/>
+                            <Title id="titleBacklog" text="Backlog — Unassigned" level="H3"/>
+                            <ToolbarSpacer id="tsBacklog"/>
+                            <ObjectStatus id="osBacklogAlert"
+                                text="{kpi>/backlogText}"
+                                state="{kpi>/backlogState}"
+                                icon="sap-icon://alert" class="panelChip"/>
+                        </Toolbar>
+                    </headerToolbar>
+                    <Table id="tblBacklog" inset="false" fixedLayout="false" width="100%"
+                        sticky="ColumnHeaders" alternateRowColors="false"
+                        items="{
+                            path: '/TicketSet',
+                            filters: [{path: 'Status', operator: 'EQ', value1: 'NW'}],
+                            sorter: { path: 'CreatedAt', descending: true }
+                        }">
+                        <columns>
+                            <Column id="colBLId" width="100px"><Text id="txtBLId" text="Ticket No"/></Column>
+                            <Column id="colBLType" width="75px" hAlign="Center"><Text id="txtBLType" text="Type"/></Column>
+                            <Column id="colBLTitle"><Text id="txtBLTitle" text="Title"/></Column>
+                            <Column id="colBLModule" width="80px" hAlign="Center" minScreenWidth="Tablet" demandPopin="true"><Text id="txtBLModule" text="Module"/></Column>
+                            <Column id="colBLCust" width="100px" hAlign="Center" minScreenWidth="Phone" demandPopin="true"><Text id="txtBLCust" text="Customer"/></Column>
+                            <Column id="colBLPrio" width="90px" hAlign="Center" minScreenWidth="Phone" demandPopin="true"><Text id="txtBLPrio" text="Priority"/></Column>
+                        </columns>
+                        <items>
+                            <ColumnListItem id="cliBLTemplate" vAlign="Middle">
+                                <cells>
+                                    <Link id="lnkBLId" text="{TicketId}" emphasized="true"/>
+                                    <ObjectStatus id="osBLType" text="{Type}"
+                                        state="{= ${Type} === 'CR' ? 'Warning' : 'Information' }"
+                                        inverted="true"/>
+                                    <Text id="txtBLTitle2" text="{Title}" wrapping="true" maxLines="2" class="tableDescCell"/>
+                                    <Text id="txtBLModule2" text="{ModuleId}"/>
+                                    <Text id="txtBLCust2" text="{CustCode}"/>
+                                    <ObjectStatus id="osBLPrio"
+                                        text="{path:'Priority', formatter:'.formatPriorityLabel'}"
+                                        state="{= ${Priority} === 'H' ? 'Error' : ${Priority} === 'M' ? 'Warning' : 'Success' }"
+                                        inverted="true"/>
+                                </cells>
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                </Panel>
 
-                        </l:Grid>
+                <!-- ═══ NEW + STANDBY ═══ -->
+                <l:Grid id="gridBottom" defaultSpan="L6 M12 S12" hSpacing="1" vSpacing="0">
 
-                        <!-- Backlog Full Width -->
-                        <Panel id="panelBacklog" width="100%">
-                            <headerToolbar>
-                                <Toolbar id="tbBacklog">
-                                    <Title id="titleBacklog" text="Backlog (Unassigned)"/>
-                                    <ToolbarSpacer id="tsBacklog"/>
-                                    <ObjectStatus id="osBacklogAlert"
-                                        text="6 tickets - consultants full"
-                                        state="Error"
-                                        icon="sap-icon://alert"/>
-                                </Toolbar>
-                            </headerToolbar>
-<Table id="tblBacklog"
-    inset="false"
-    fixedLayout="false"
-    width="100%"
-    items="{
-        path: '/TicketSet',
-        filters: [
-            {path: 'Status', operator: 'EQ', value1: 'NW'}
-        ]
-    }">
-    <columns>
-        <Column id="colBLType" width="60px">
-            <Text id="txtBLType" text="Type"/>
-        </Column>
-        <Column id="colBLId" width="90px">
-            <Text id="txtBLId" text="ID"/>
-        </Column>
-        <Column id="colBLTitle">
-            <Text id="txtBLTitle" text="Title"/>
-        </Column>
-        <Column id="colBLCust" width="90px">
-            <Text id="txtBLCust" text="Customer"/>
-        </Column>
-        <Column id="colBLPrio" width="80px">
-            <Text id="txtBLPrio" text="Priority"/>
-        </Column>
-    </columns>
-    <items>
-        <ColumnListItem id="cliBLTemplate">
-            <cells>
-                <ObjectStatus id="osBLType" text="{Type}" state="Information" inverted="true"/>
-                <Link id="lnkBLId" text="{TicketId}"/>
-                <Text id="txtBLTitle2" text="{Title}"/>
-                <Text id="txtBLCust2" text="{CustCode}"/>
-                <ObjectStatus
-                    id="osBLPrio"
-                    text="{Priority}"
-                    state="{= ${Priority} === 'H' ? 'Error' : ${Priority} === 'M' ? 'Warning' : 'Success' }"/>
-            </cells>
-        </ColumnListItem>
-    </items>
-</Table>
-                        </Panel>
+                    <Panel id="panelNewTickets" width="100%" class="dashboardPanel">
+                        <headerToolbar>
+                            <Toolbar id="tbNewTickets" class="dashboardPanelToolbar">
+                                <HBox id="hbNewDot" class="panelDot panelDotIndigo"/>
+                                <Title id="titleNewTickets" text="New Tickets Today" level="H3"/>
+                                <ToolbarSpacer id="tsNewTickets"/>
+                                <ObjectStatus id="osNewTicketsCount" text="{kpi>/newToday} new" state="Information" class="panelChip"/>
+                            </Toolbar>
+                        </headerToolbar>
+                        <ScrollContainer id="scNewTickets" height="280px" vertical="true" width="100%">
+                            <List id="lstNewTickets" showSeparators="None"
+                                items="{
+                                    path: '/TicketSet',
+                                    sorter: { path: 'CreatedAt', descending: true },
+                                    length: 8
+                                }">
+                                <CustomListItem id="cliNewTpl">
+                                    <HBox id="hbNew" alignItems="Center" width="100%" class="miniItem">
+                                        <ObjectStatus id="osNewType" text="{Type}"
+                                            state="{= ${Type} === 'CR' ? 'Warning' : 'Information' }"
+                                            inverted="true" class="miniItemBadge"/>
+                                        <Text id="txtNewTitle" text="{TicketId} · {Title}" wrapping="false" class="miniItemTitle">
+                                            <layoutData><FlexItemData id="fidNew" growFactor="1" shrinkFactor="1" minWidth="0"/></layoutData>
+                                        </Text>
+                                        <Text id="txtNewCust" text="{CustCode}" class="miniItemSide"/>
+                                    </HBox>
+                                </CustomListItem>
+                            </List>
+                        </ScrollContainer>
+                    </Panel>
 
-                    </VBox>
-
-                    <!-- ─── RIGHT COLUMN ─── -->
-                    <VBox id="vbRight" class="rightColumn">
-                        <layoutData>
-                            <l:GridData id="gdRight" span="L4 M4 S12"/>
-                        </layoutData>
-
-                        <Panel id="panelNewTickets" width="100%" class="sapUiSmallMarginBottom">
-                            <headerToolbar>
-                                <Toolbar id="tbNewTickets">
-                                    <Title id="titleNewTickets" text="New Tickets Today"/>
-                                    <ToolbarSpacer id="tsNewTickets"/>
-                                    <ObjectStatus id="osNewTicketsCount" text="4 new" state="Information"/>
-                                </Toolbar>
-                            </headerToolbar>
-                           <List id="lstNewTickets"
-    items="{
-        path: '/TicketSet',
-        sorter: { path: 'CreatedAt', descending: true },
-        length: 4
-    }">
-    <StandardListItem id="sliNewTpl"
-        title="{TicketId}"
-        description="{Title} - {CustCode}"
-        info=""
-        icon="{= ${Type} === 'CR' ? 'sap-icon://request' : 'sap-icon://message-information' }"
-        iconInset="false"/>
-</List>
-                        </Panel>
-
-                        <Panel id="panelStandby" headerText="Standby Team" width="100%">
-<List id="lstStandby"
-    items="{
-        path: '/ConsultantSet',
-        filters: [
-            {path: 'Status', operator: 'EQ', value1: 'A'}
-        ]
-    }">
-    <StandardListItem id="sliStandbyTpl"
-        title="{Name}"
-        description="{ModuleId}"
-        info="Available"
-        infoState="Success"/>
-</List>
-                        </Panel>
-
-                    </VBox>
+                    <Panel id="panelStandby" width="100%" class="dashboardPanel">
+                        <headerToolbar>
+                            <Toolbar id="tbStandby" class="dashboardPanelToolbar">
+                                <HBox id="hbSTDot" class="panelDot panelDotGreen"/>
+                                <Title id="titleStandby" text="Standby Team" level="H3"/>
+                                <ToolbarSpacer id="tsStandby"/>
+                                <ObjectStatus id="osStandbyCount" text="{kpi>/standby} available" state="Success" class="panelChip"/>
+                            </Toolbar>
+                        </headerToolbar>
+                        <ScrollContainer id="scStandby" height="280px" vertical="true" width="100%">
+                            <List id="lstStandby" showSeparators="None"
+                                items="{
+                                    path: '/ConsultantSet',
+                                    filters: [{path: 'Status', operator: 'EQ', value1: 'A'}]
+                                }">
+                                <CustomListItem id="cliStandbyTpl">
+                                    <HBox id="hbStandby" alignItems="Center" width="100%" class="miniItem">
+                                        <Text id="txtStandbyInit" text="{path:'Name', formatter:'.formatInitials'}" class="initialsChip"/>
+                                        <Text id="txtStandbyName" text="{Name}" wrapping="false" class="miniItemTitle">
+                                            <layoutData><FlexItemData id="fidStandby" growFactor="1" shrinkFactor="1" minWidth="0"/></layoutData>
+                                        </Text>
+                                        <Text id="txtStandbyMod" text="{ModuleId}" class="miniItemMod"/>
+                                        <ObjectStatus id="osStandbyAvail" text="Available" state="Success" class="miniItemStatus"/>
+                                    </HBox>
+                                </CustomListItem>
+                            </List>
+                        </ScrollContainer>
+                    </Panel>
 
                 </l:Grid>
 

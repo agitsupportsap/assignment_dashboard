@@ -10,111 +10,95 @@
         <content>
             <VBox id="vbPerfMain" class="dashboardWrapper">
 
-                <!-- ═══ KPI ROW: Finished + SLA ═══ -->
+                <!-- ═══ KPI: FINISHED + SLA ═══ -->
                 <l:Grid id="gridPerfKpi" hSpacing="1" vSpacing="0" class="kpiGrid">
 
-                    <VBox id="kpiFinished" class="kpiCard">
-                        <layoutData>
-                            <l:GridData id="gdFinished" span="L4 M6 S12"/>
-                        </layoutData>
+                    <VBox id="kpiFinished" class="kpiCard kpiAccentGreen">
+                        <layoutData><l:GridData id="gdFinished" span="L4 M12 S12"/></layoutData>
+                        <HBox id="kpiChipFin" class="kpiIconChip" justifyContent="Center" alignItems="Center">
+                            <core:Icon id="kpiIconFin" src="sap-icon://complete"/>
+                        </HBox>
                         <Label id="lblFinished" text="Tickets Finished" class="kpiCardLabel"/>
-                        <Text id="subFinished" text="this month" class="kpiCardSub"/>
-                        <ObjectStatus id="valFinished" text="128" state="Success" class="kpiCardValue"/>
+                        <Text id="subFinished" text="total closed" class="kpiCardSub"/>
+                        <ObjectStatus id="valFinished" text="{kpi>/finishedTotal}" state="Success" class="kpiCardValue"/>
                         <HBox id="hbFinishedBreakdown" class="sapUiSmallMarginTop">
-                            <VBox id="vbFinSup" class="sapUiTinyMarginEnd">
+                            <VBox id="vbFinSup" class="sapUiMediumMarginEnd">
                                 <Text id="lblFinSup" text="Support" class="kpiCardSub"/>
-                                <ObjectStatus id="valFinSup" text="89" state="Information"/>
+                                <ObjectStatus id="valFinSup" text="{kpi>/finishedSup}" state="Information"/>
                             </VBox>
-                            <VBox id="vbFinCr" class="sapUiTinyMarginEnd">
+                            <VBox id="vbFinCr" class="sapUiMediumMarginEnd">
                                 <Text id="lblFinCr" text="CR" class="kpiCardSub"/>
-                                <ObjectStatus id="valFinCr" text="39" state="Information"/>
+                                <ObjectStatus id="valFinCr" text="{kpi>/finishedCr}" state="Information"/>
                             </VBox>
                             <VBox id="vbFinAvg">
                                 <Text id="lblFinAvg" text="Avg/day" class="kpiCardSub"/>
-                                <ObjectStatus id="valFinAvg" text="6.4" state="None"/>
+                                <ObjectStatus id="valFinAvg" text="{kpi>/finishedAvgDay}" state="None"/>
                             </VBox>
                         </HBox>
                     </VBox>
 
-                    <Panel id="panelSla" headerText="SLA Compliance" width="100%">
-                        <layoutData>
-                            <l:GridData id="gdSla" span="L8 M6 S12"/>
-                        </layoutData>
-                        <VBox id="vbSla" class="sapUiSmallMargin">
+                    <Panel id="panelSla" width="100%" class="dashboardPanel">
+                        <layoutData><l:GridData id="gdSla" span="L8 M12 S12"/></layoutData>
+                        <headerToolbar>
+                            <Toolbar id="tbSla" class="dashboardPanelToolbar">
+                                <HBox id="hbSlaDot" class="panelDot panelDotIndigo"/>
+                                <Title id="titleSla" text="SLA Compliance" level="H3"/>
+                            </Toolbar>
+                        </headerToolbar>
+                        <VBox id="vbSla" class="sapUiMediumMargin">
                             <HBox id="hbSlaTop" justifyContent="SpaceBetween" class="sapUiSmallMarginBottom">
                                 <VBox id="vbSlaWithin">
-                                    <Text id="lblSlaWithin" text="Within SLA" class="kpiCardSub"/>
-                                    <ObjectStatus id="valSlaWithin" text="106 (83%)" state="Success" class="kpiCardValue"/>
+                                    <Text id="lblSlaWithin" text="WITHIN SLA" class="kpiCardSub"/>
+                                    <ObjectStatus id="valSlaWithin" text="{kpi>/slaWithinText}" state="Success" class="kpiCardValue"/>
                                 </VBox>
                                 <VBox id="vbSlaBreach">
-                                    <Text id="lblSlaBreach" text="Breach" class="kpiCardSub"/>
-                                    <ObjectStatus id="valSlaBreach" text="22 (17%)" state="Error" class="kpiCardValue"/>
+                                    <Text id="lblSlaBreach" text="BREACH" class="kpiCardSub"/>
+                                    <ObjectStatus id="valSlaBreach" text="{kpi>/slaBreachText}" state="Error" class="kpiCardValue"/>
                                 </VBox>
                                 <VBox id="vbSlaAvg">
-                                    <Text id="lblSlaAvg" text="Avg resolution" class="kpiCardSub"/>
-                                    <ObjectStatus id="valSlaAvg" text="2.3 days" state="None" class="kpiCardValue"/>
+                                    <Text id="lblSlaAvg" text="AVG RESOLUTION&#xA;(SUPPORT ONLY)" class="kpiCardSub multiLineSub"/>
+                                    <ObjectStatus id="valSlaAvg" text="{= ${kpi>/slaAvgDays} + ' days'}" state="None" class="kpiCardValue"/>
                                 </VBox>
                             </HBox>
-                            <ProgressIndicator id="piSla" percentValue="83" displayValue="83% within SLA" state="Success" height="20px"/>
+                            <ProgressIndicator id="piSla"
+                                percentValue="{kpi>/slaWithinPct}"
+                                displayValue="{= ${kpi>/slaWithinPct} + '% within SLA'}"
+                                state="Success"/>
                         </VBox>
                     </Panel>
 
                 </l:Grid>
 
                 <!-- ═══ TICKETS PER CUSTOMER ═══ -->
-                <Panel id="panelCustomer" headerText="Tickets per Customer" width="100%" class="sapUiSmallMarginBottom">
-                    <Table id="tblCustomer" inset="false" fixedLayout="false" width="100%">
+                <Panel id="panelCustomer" width="100%" class="sapUiSmallMarginBottom dashboardPanel">
+                    <headerToolbar>
+                        <Toolbar id="tbCustomer" class="dashboardPanelToolbar">
+                            <HBox id="hbCustDot" class="panelDot panelDotSky"/>
+                            <Title id="titleCustomer" text="Tickets per Customer" level="H3"/>
+                            <ToolbarSpacer id="tsCustomer"/>
+                        </Toolbar>
+                    </headerToolbar>
+                    <Table id="tblCustomer" inset="false" fixedLayout="false" width="100%"
+                        sticky="ColumnHeaders" alternateRowColors="false"
+                        items="{ path: 'custModel>/items' }">
                         <columns>
                             <Column id="colCustName"><Text id="txtCustName" text="Customer"/></Column>
-                            <Column id="colCustSup" hAlign="Center" width="100px"><Text id="txtCustSup" text="Support"/></Column>
-                            <Column id="colCustCr" hAlign="Center" width="100px"><Text id="txtCustCr" text="CR"/></Column>
-                            <Column id="colCustTotal" hAlign="Center" width="100px"><Text id="txtCustTotal" text="Total"/></Column>
-                            <Column id="colCustBar"><Text id="txtCustBar" text="Distribution"/></Column>
+                            <Column id="colCustSup" hAlign="Center" width="96px" minScreenWidth="Phone" demandPopin="true"><Text id="txtCustSup" text="Support"/></Column>
+                            <Column id="colCustCr" hAlign="Center" width="96px" minScreenWidth="Phone" demandPopin="true"><Text id="txtCustCr" text="CR"/></Column>
+                            <Column id="colCustTotal" hAlign="Center" width="80px"><Text id="txtCustTotal" text="Total"/></Column>
+                            <Column id="colCustBar" minScreenWidth="Tablet" demandPopin="true"><Text id="txtCustBar" text="Distribution"/></Column>
                         </columns>
                         <items>
-                            <ColumnListItem id="cliCust1">
+                            <ColumnListItem id="cliCustTpl" vAlign="Middle">
                                 <cells>
-                                    <Text id="t1Name" text="TAM"/>
-                                    <ObjectStatus id="o1Sup" text="28" state="Information" inverted="true"/>
-                                    <ObjectStatus id="o1Cr" text="12" state="Information" inverted="true"/>
-                                    <Text id="t1Total" text="40"/>
-                                    <ProgressIndicator id="pi1" percentValue="100" displayValue="40" state="Information"/>
-                                </cells>
-                            </ColumnListItem>
-                            <ColumnListItem id="cliCust2">
-                                <cells>
-                                    <Text id="t2Name" text="PAR"/>
-                                    <ObjectStatus id="o2Sup" text="22" state="Information" inverted="true"/>
-                                    <ObjectStatus id="o2Cr" text="8" state="Information" inverted="true"/>
-                                    <Text id="t2Total" text="30"/>
-                                    <ProgressIndicator id="pi2" percentValue="75" displayValue="30" state="Information"/>
-                                </cells>
-                            </ColumnListItem>
-                            <ColumnListItem id="cliCust3">
-                                <cells>
-                                    <Text id="t3Name" text="BCA"/>
-                                    <ObjectStatus id="o3Sup" text="18" state="Information" inverted="true"/>
-                                    <ObjectStatus id="o3Cr" text="10" state="Information" inverted="true"/>
-                                    <Text id="t3Total" text="28"/>
-                                    <ProgressIndicator id="pi3" percentValue="70" displayValue="28" state="Information"/>
-                                </cells>
-                            </ColumnListItem>
-                            <ColumnListItem id="cliCust4">
-                                <cells>
-                                    <Text id="t4Name" text="KSM"/>
-                                    <ObjectStatus id="o4Sup" text="12" state="Information" inverted="true"/>
-                                    <ObjectStatus id="o4Cr" text="6" state="Information" inverted="true"/>
-                                    <Text id="t4Total" text="18"/>
-                                    <ProgressIndicator id="pi4" percentValue="45" displayValue="18" state="Information"/>
-                                </cells>
-                            </ColumnListItem>
-                            <ColumnListItem id="cliCust5">
-                                <cells>
-                                    <Text id="t5Name" text="ASR"/>
-                                    <ObjectStatus id="o5Sup" text="9" state="Information" inverted="true"/>
-                                    <ObjectStatus id="o5Cr" text="3" state="Information" inverted="true"/>
-                                    <Text id="t5Total" text="12"/>
-                                    <ProgressIndicator id="pi5" percentValue="30" displayValue="12" state="Information"/>
+                                    <Text id="txtCustCell" text="{custModel>cust}" class="leaderName"/>
+                                    <ObjectStatus id="osCustSup" text="{custModel>sup}" state="Information" inverted="true"/>
+                                    <ObjectStatus id="osCustCr" text="{custModel>cr}" state="Warning" inverted="true"/>
+                                    <Text id="txtCustTotalCell" text="{custModel>total}" class="leaderTickets"/>
+                                    <ProgressIndicator id="piCust"
+                                        percentValue="{custModel>pct}"
+                                        displayValue="{custModel>total}"
+                                        state="Information"/>
                                 </cells>
                             </ColumnListItem>
                         </items>
@@ -122,66 +106,36 @@
                 </Panel>
 
                 <!-- ═══ LEADERBOARD ═══ -->
-                <Panel id="panelLeader" width="100%">
+                <Panel id="panelLeader" width="100%" class="dashboardPanel">
                     <headerToolbar>
-                        <Toolbar id="tbLeader">
-                            <Title id="titleLeader" text="Consultant Leaderboard"/>
+                        <Toolbar id="tbLeader" class="dashboardPanelToolbar">
+                            <HBox id="hbLdDot" class="panelDot panelDotAmber"/>
+                            <Title id="titleLeader" text="Consultant Leaderboard" level="H3"/>
                             <ToolbarSpacer id="tsLeader"/>
-                            <Text id="subLeader" text="Rated by customer - max 10 stars per ticket"/>
+                            <Text id="subLeader" text="Ranked by total credit points" class="kpiCardSub"/>
                         </Toolbar>
                     </headerToolbar>
-                    <Table id="tblLeader" inset="false" fixedLayout="false" width="100%">
+                    <Table id="tblLeader" inset="false" fixedLayout="false" width="100%"
+                        sticky="ColumnHeaders" alternateRowColors="false"
+                        items="{ path: 'leaderModel>/items' }">
                         <columns>
-                            <Column id="colLdRank" hAlign="Center" width="60px"><Text id="txtLdRank" text="Rank"/></Column>
+                            <Column id="colLdRank" hAlign="Center" width="64px"><Text id="txtLdRank" text="Rank"/></Column>
                             <Column id="colLdName"><Text id="txtLdName" text="Consultant"/></Column>
-                            <Column id="colLdTickets" hAlign="Center" width="100px"><Text id="txtLdTickets" text="Tickets"/></Column>
-                            <Column id="colLdRating"><Text id="txtLdRating" text="Avg Rating"/></Column>
-                            <Column id="colLdTotal" hAlign="End" width="100px"><Text id="txtLdTotal" text="Total Stars"/></Column>
+                            <Column id="colLdTickets" hAlign="Center" width="100px" minScreenWidth="Phone" demandPopin="true"><Text id="txtLdTickets" text="Tickets"/></Column>
+                            <Column id="colLdAvg" hAlign="Center" width="110px" minScreenWidth="Tablet" demandPopin="true"><Text id="txtLdAvg" text="Avg Credit"/></Column>
+                            <Column id="colLdTotal" hAlign="End" width="120px"><Text id="txtLdTotal" text="Total Credit"/></Column>
                         </columns>
                         <items>
-                            <ColumnListItem id="cliLd1">
+                            <ColumnListItem id="cliLdTpl" vAlign="Middle">
                                 <cells>
-                                    <ObjectStatus id="osLd1Rank" text="1" state="Warning" inverted="true"/>
-                                    <Text id="txtLd1Name" text="Citra (FI)"/>
-                                    <Text id="txtLd1Tickets" text="12"/>
-                                    <RatingIndicator id="riLd1" maxValue="10" value="9.4" iconSize="14px" editable="false"/>
-                                    <ObjectStatus id="osLd1Total" text="113" state="Warning"/>
-                                </cells>
-                            </ColumnListItem>
-                            <ColumnListItem id="cliLd2">
-                                <cells>
-                                    <ObjectStatus id="osLd2Rank" text="2" state="None" inverted="true"/>
-                                    <Text id="txtLd2Name" text="Danny (ABAP)"/>
-                                    <Text id="txtLd2Tickets" text="11"/>
-                                    <RatingIndicator id="riLd2" maxValue="10" value="9.1" iconSize="14px" editable="false"/>
-                                    <ObjectStatus id="osLd2Total" text="100" state="Warning"/>
-                                </cells>
-                            </ColumnListItem>
-                            <ColumnListItem id="cliLd3">
-                                <cells>
-                                    <ObjectStatus id="osLd3Rank" text="3" state="None" inverted="true"/>
-                                    <Text id="txtLd3Name" text="Andi (MM)"/>
-                                    <Text id="txtLd3Tickets" text="10"/>
-                                    <RatingIndicator id="riLd3" maxValue="10" value="8.7" iconSize="14px" editable="false"/>
-                                    <ObjectStatus id="osLd3Total" text="87" state="Warning"/>
-                                </cells>
-                            </ColumnListItem>
-                            <ColumnListItem id="cliLd4">
-                                <cells>
-                                    <Text id="txtLd4Rank" text="4"/>
-                                    <Text id="txtLd4Name" text="Budi (SD)"/>
-                                    <Text id="txtLd4Tickets" text="9"/>
-                                    <RatingIndicator id="riLd4" maxValue="10" value="8.4" iconSize="14px" editable="false"/>
-                                    <ObjectStatus id="osLd4Total" text="76" state="Warning"/>
-                                </cells>
-                            </ColumnListItem>
-                            <ColumnListItem id="cliLd5">
-                                <cells>
-                                    <Text id="txtLd5Rank" text="5"/>
-                                    <Text id="txtLd5Name" text="Eko (Basis)"/>
-                                    <Text id="txtLd5Tickets" text="8"/>
-                                    <RatingIndicator id="riLd5" maxValue="10" value="8.1" iconSize="14px" editable="false"/>
-                                    <ObjectStatus id="osLd5Total" text="65" state="Warning"/>
+                                    <Text id="txtLdRankCell" text="{leaderModel>rank}" class="rankMedal {leaderModel>rankClass}"/>
+                                    <HBox id="hbLdName" alignItems="Center">
+                                        <Text id="txtLdInit" text="{leaderModel>initials}" class="initialsChip"/>
+                                        <Text id="txtLdNameCell" text="{leaderModel>display}" class="leaderName"/>
+                                    </HBox>
+                                    <Text id="txtLdTicketsCell" text="{leaderModel>tickets}" class="leaderTickets"/>
+                                    <Text id="txtLdAvgCell" text="{leaderModel>avgCredit}" class="leaderAvg"/>
+                                    <ObjectStatus id="osLdTotal" text="{leaderModel>creditPoints}" state="Warning" class="creditTotal"/>
                                 </cells>
                             </ColumnListItem>
                         </items>
