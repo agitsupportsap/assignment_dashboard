@@ -1,0 +1,24 @@
+{
+  "generationParameters": {
+    "generationDate": "Sat May 23 2026 11:24:02 GMT+0700 (Western Indonesia Time)",
+    "generatorPlatform": "Visual Studio Code",
+    "serviceType": "SAP System (ABAP On-Premise)",
+    "metadataFilename": "",
+    "serviceUrl": "http://iditvshana01.ag-it.com/sap/opu/odata/sap/ZTICKET_SRV_SRV_01",
+    "appName": "assignment",
+    "appTitle": "Assignment Dashboard",
+    "appDescription": "Ticket assignment dashboard",
+    "appNamespace": "com.ztkt",
+    "ui5Theme": "sap_fiori_3",
+    "ui5Version": "1.71.13",
+    "enableCodeAssist": false,
+    "enableEslint": false,
+    "enableTypeScript": false,
+    "showMockDataInfo": true,
+    "generatorVersion": "1.19.3",
+    "template": "Basic V2",
+    "generatorName": "SAP Fiori Application Generator",
+    "entityRelatedConfig": [],
+    "launchText": "To launch the generated application, run the following from the generated application root folder:\n\n```\n    npm start\n```"
+  }
+}

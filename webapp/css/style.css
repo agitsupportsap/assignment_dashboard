@@ -1,0 +1,143 @@
+/* ═══════════════════════════════════════════
+   FULL SCREEN — pastikan app mengisi viewport
+   ═══════════════════════════════════════════ */
+html,
+body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+/* ToolPage & wrapper harus full tinggi */
+.sapTntToolPage,
+.sapTntToolPageWrapper,
+.sapTntToolPageContentWrapper {
+    height: 100% !important;
+}
+
+/* Page scroll container full width */
+.sapMPage > .sapMScrollCont {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* ═══════════════════════════════════════════
+   DASHBOARD WRAPPER — padding minimal
+   ═══════════════════════════════════════════ */
+.dashboardWrapper {
+    padding: 0.75rem 1rem 1rem 1rem;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+/* ═══════════════════════════════════════════
+   KPI GRID — compact cards baris atas
+   ═══════════════════════════════════════════ */
+.kpiGrid {
+    width: 100% !important;
+    margin-bottom: 0.75rem !important;
+}
+
+/* Card container */
+.kpiCard {
+    background-color: #ffffff;
+    border-radius: 0.5rem;
+    padding: 0.625rem 1rem 0.75rem 1rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.10);
+    box-sizing: border-box;
+    width: 100%;
+}
+
+/* Label atas (judul KPI) */
+.kpiCardLabel.sapMLbl {
+    font-size: 0.8125rem !important;
+    font-weight: 600 !important;
+    color: #32363a !important;
+    line-height: 1.3 !important;
+}
+
+/* Subtext (keterangan kecil) */
+.kpiCardSub.sapMText {
+    font-size: 0.75rem !important;
+    color: #6a6d70 !important;
+    margin-bottom: 0.35rem !important;
+    line-height: 1.2 !important;
+}
+
+/* Angka KPI — besar & berwarna */
+.kpiCardValue.sapMObjStatus .sapMObjStatusText {
+    font-size: 1.75rem !important;
+    font-weight: 700 !important;
+    line-height: 1.1 !important;
+}
+
+/* Hilangkan icon ObjectStatus (hanya teks) */
+.kpiCardValue.sapMObjStatus .sapMObjStatusIcon {
+    display: none !important;
+}
+
+/* ═══════════════════════════════════════════
+   MAIN GRID — konten utama (kiri + kanan)
+   ═══════════════════════════════════════════ */
+.mainGrid {
+    width: 100% !important;
+}
+
+/* Kolom kiri & kanan selalu box-sizing border-box */
+.leftColumn,
+.rightColumn {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+/* Sedikit gap antara kiri dan kanan */
+.leftColumn {
+    padding-right: 0.25rem;
+}
+
+.rightColumn {
+    padding-left: 0.25rem;
+}
+
+/* ═══════════════════════════════════════════
+   PANEL — pastikan full width & rapi
+   ═══════════════════════════════════════════ */
+#panelSupport,
+#panelCR,
+#panelBacklog,
+#panelNewTickets,
+#panelStandby {
+    width: 100% !important;
+    box-sizing: border-box;
+}
+
+/* ═══════════════════════════════════════════
+   TABLE — kolom tidak terpotong
+   ═══════════════════════════════════════════ */
+#tblSupport,
+#tblCR,
+#tblBacklog {
+    width: 100% !important;
+    table-layout: auto;
+}
+
+/* ═══════════════════════════════════════════
+   NEW TICKETS LIST — deskripsi tidak terpotong
+   ═══════════════════════════════════════════ */
+#lstNewTickets .sapMSLIDescriptionText {
+    white-space: normal;
+    word-break: break-word;
+}
+
+#lstNewTickets .sapMSLITitle {
+    font-weight: 600;
+}
+
+/* Info (jam) rata kanan dan tidak terpotong */
+#lstNewTickets .sapMSLIInfo {
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+

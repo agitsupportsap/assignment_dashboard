@@ -1,0 +1,195 @@
+<mvc:View
+    controllerName="com.ztkt.assignment.controller.View2"
+    xmlns="sap.m"
+    xmlns:l="sap.ui.layout"
+    xmlns:core="sap.ui.core"
+    xmlns:mvc="sap.ui.core.mvc"
+    displayBlock="true">
+
+    <Page id="pagePerf" showHeader="false" backgroundDesign="Solid">
+        <content>
+            <VBox id="vbPerfMain" class="dashboardWrapper">
+
+                <!-- ═══ KPI ROW: Finished + SLA ═══ -->
+                <l:Grid id="gridPerfKpi" hSpacing="1" vSpacing="0" class="kpiGrid">
+
+                    <VBox id="kpiFinished" class="kpiCard">
+                        <layoutData>
+                            <l:GridData id="gdFinished" span="L4 M6 S12"/>
+                        </layoutData>
+                        <Label id="lblFinished" text="Tickets Finished" class="kpiCardLabel"/>
+                        <Text id="subFinished" text="this month" class="kpiCardSub"/>
+                        <ObjectStatus id="valFinished" text="128" state="Success" class="kpiCardValue"/>
+                        <HBox id="hbFinishedBreakdown" class="sapUiSmallMarginTop">
+                            <VBox id="vbFinSup" class="sapUiTinyMarginEnd">
+                                <Text id="lblFinSup" text="Support" class="kpiCardSub"/>
+                                <ObjectStatus id="valFinSup" text="89" state="Information"/>
+                            </VBox>
+                            <VBox id="vbFinCr" class="sapUiTinyMarginEnd">
+                                <Text id="lblFinCr" text="CR" class="kpiCardSub"/>
+                                <ObjectStatus id="valFinCr" text="39" state="Information"/>
+                            </VBox>
+                            <VBox id="vbFinAvg">
+                                <Text id="lblFinAvg" text="Avg/day" class="kpiCardSub"/>
+                                <ObjectStatus id="valFinAvg" text="6.4" state="None"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+
+                    <Panel id="panelSla" headerText="SLA Compliance" width="100%">
+                        <layoutData>
+                            <l:GridData id="gdSla" span="L8 M6 S12"/>
+                        </layoutData>
+                        <VBox id="vbSla" class="sapUiSmallMargin">
+                            <HBox id="hbSlaTop" justifyContent="SpaceBetween" class="sapUiSmallMarginBottom">
+                                <VBox id="vbSlaWithin">
+                                    <Text id="lblSlaWithin" text="Within SLA" class="kpiCardSub"/>
+                                    <ObjectStatus id="valSlaWithin" text="106 (83%)" state="Success" class="kpiCardValue"/>
+                                </VBox>
+                                <VBox id="vbSlaBreach">
+                                    <Text id="lblSlaBreach" text="Breach" class="kpiCardSub"/>
+                                    <ObjectStatus id="valSlaBreach" text="22 (17%)" state="Error" class="kpiCardValue"/>
+                                </VBox>
+                                <VBox id="vbSlaAvg">
+                                    <Text id="lblSlaAvg" text="Avg resolution" class="kpiCardSub"/>
+                                    <ObjectStatus id="valSlaAvg" text="2.3 days" state="None" class="kpiCardValue"/>
+                                </VBox>
+                            </HBox>
+                            <ProgressIndicator id="piSla" percentValue="83" displayValue="83% within SLA" state="Success" height="20px"/>
+                        </VBox>
+                    </Panel>
+
+                </l:Grid>
+
+                <!-- ═══ TICKETS PER CUSTOMER ═══ -->
+                <Panel id="panelCustomer" headerText="Tickets per Customer" width="100%" class="sapUiSmallMarginBottom">
+                    <Table id="tblCustomer" inset="false" fixedLayout="false" width="100%">
+                        <columns>
+                            <Column id="colCustName"><Text id="txtCustName" text="Customer"/></Column>
+                            <Column id="colCustSup" hAlign="Center" width="100px"><Text id="txtCustSup" text="Support"/></Column>
+                            <Column id="colCustCr" hAlign="Center" width="100px"><Text id="txtCustCr" text="CR"/></Column>
+                            <Column id="colCustTotal" hAlign="Center" width="100px"><Text id="txtCustTotal" text="Total"/></Column>
+                            <Column id="colCustBar"><Text id="txtCustBar" text="Distribution"/></Column>
+                        </columns>
+                        <items>
+                            <ColumnListItem id="cliCust1">
+                                <cells>
+                                    <Text id="t1Name" text="TAM"/>
+                                    <ObjectStatus id="o1Sup" text="28" state="Information" inverted="true"/>
+                                    <ObjectStatus id="o1Cr" text="12" state="Information" inverted="true"/>
+                                    <Text id="t1Total" text="40"/>
+                                    <ProgressIndicator id="pi1" percentValue="100" displayValue="40" state="Information"/>
+                                </cells>
+                            </ColumnListItem>
+                            <ColumnListItem id="cliCust2">
+                                <cells>
+                                    <Text id="t2Name" text="PAR"/>
+                                    <ObjectStatus id="o2Sup" text="22" state="Information" inverted="true"/>
+                                    <ObjectStatus id="o2Cr" text="8" state="Information" inverted="true"/>
+                                    <Text id="t2Total" text="30"/>
+                                    <ProgressIndicator id="pi2" percentValue="75" displayValue="30" state="Information"/>
+                                </cells>
+                            </ColumnListItem>
+                            <ColumnListItem id="cliCust3">
+                                <cells>
+                                    <Text id="t3Name" text="BCA"/>
+                                    <ObjectStatus id="o3Sup" text="18" state="Information" inverted="true"/>
+                                    <ObjectStatus id="o3Cr" text="10" state="Information" inverted="true"/>
+                                    <Text id="t3Total" text="28"/>
+                                    <ProgressIndicator id="pi3" percentValue="70" displayValue="28" state="Information"/>
+                                </cells>
+                            </ColumnListItem>
+                            <ColumnListItem id="cliCust4">
+                                <cells>
+                                    <Text id="t4Name" text="KSM"/>
+                                    <ObjectStatus id="o4Sup" text="12" state="Information" inverted="true"/>
+                                    <ObjectStatus id="o4Cr" text="6" state="Information" inverted="true"/>
+                                    <Text id="t4Total" text="18"/>
+                                    <ProgressIndicator id="pi4" percentValue="45" displayValue="18" state="Information"/>
+                                </cells>
+                            </ColumnListItem>
+                            <ColumnListItem id="cliCust5">
+                                <cells>
+                                    <Text id="t5Name" text="ASR"/>
+                                    <ObjectStatus id="o5Sup" text="9" state="Information" inverted="true"/>
+                                    <ObjectStatus id="o5Cr" text="3" state="Information" inverted="true"/>
+                                    <Text id="t5Total" text="12"/>
+                                    <ProgressIndicator id="pi5" percentValue="30" displayValue="12" state="Information"/>
+                                </cells>
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                </Panel>
+
+                <!-- ═══ LEADERBOARD ═══ -->
+                <Panel id="panelLeader" width="100%">
+                    <headerToolbar>
+                        <Toolbar id="tbLeader">
+                            <Title id="titleLeader" text="Consultant Leaderboard"/>
+                            <ToolbarSpacer id="tsLeader"/>
+                            <Text id="subLeader" text="Rated by customer - max 10 stars per ticket"/>
+                        </Toolbar>
+                    </headerToolbar>
+                    <Table id="tblLeader" inset="false" fixedLayout="false" width="100%">
+                        <columns>
+                            <Column id="colLdRank" hAlign="Center" width="60px"><Text id="txtLdRank" text="Rank"/></Column>
+                            <Column id="colLdName"><Text id="txtLdName" text="Consultant"/></Column>
+                            <Column id="colLdTickets" hAlign="Center" width="100px"><Text id="txtLdTickets" text="Tickets"/></Column>
+                            <Column id="colLdRating"><Text id="txtLdRating" text="Avg Rating"/></Column>
+                            <Column id="colLdTotal" hAlign="End" width="100px"><Text id="txtLdTotal" text="Total Stars"/></Column>
+                        </columns>
+                        <items>
+                            <ColumnListItem id="cliLd1">
+                                <cells>
+                                    <ObjectStatus id="osLd1Rank" text="1" state="Warning" inverted="true"/>
+                                    <Text id="txtLd1Name" text="Citra (FI)"/>
+                                    <Text id="txtLd1Tickets" text="12"/>
+                                    <RatingIndicator id="riLd1" maxValue="10" value="9.4" iconSize="14px" editable="false"/>
+                                    <ObjectStatus id="osLd1Total" text="113" state="Warning"/>
+                                </cells>
+                            </ColumnListItem>
+                            <ColumnListItem id="cliLd2">
+                                <cells>
+                                    <ObjectStatus id="osLd2Rank" text="2" state="None" inverted="true"/>
+                                    <Text id="txtLd2Name" text="Danny (ABAP)"/>
+                                    <Text id="txtLd2Tickets" text="11"/>
+                                    <RatingIndicator id="riLd2" maxValue="10" value="9.1" iconSize="14px" editable="false"/>
+                                    <ObjectStatus id="osLd2Total" text="100" state="Warning"/>
+                                </cells>
+                            </ColumnListItem>
+                            <ColumnListItem id="cliLd3">
+                                <cells>
+                                    <ObjectStatus id="osLd3Rank" text="3" state="None" inverted="true"/>
+                                    <Text id="txtLd3Name" text="Andi (MM)"/>
+                                    <Text id="txtLd3Tickets" text="10"/>
+                                    <RatingIndicator id="riLd3" maxValue="10" value="8.7" iconSize="14px" editable="false"/>
+                                    <ObjectStatus id="osLd3Total" text="87" state="Warning"/>
+                                </cells>
+                            </ColumnListItem>
+                            <ColumnListItem id="cliLd4">
+                                <cells>
+                                    <Text id="txtLd4Rank" text="4"/>
+                                    <Text id="txtLd4Name" text="Budi (SD)"/>
+                                    <Text id="txtLd4Tickets" text="9"/>
+                                    <RatingIndicator id="riLd4" maxValue="10" value="8.4" iconSize="14px" editable="false"/>
+                                    <ObjectStatus id="osLd4Total" text="76" state="Warning"/>
+                                </cells>
+                            </ColumnListItem>
+                            <ColumnListItem id="cliLd5">
+                                <cells>
+                                    <Text id="txtLd5Rank" text="5"/>
+                                    <Text id="txtLd5Name" text="Eko (Basis)"/>
+                                    <Text id="txtLd5Tickets" text="8"/>
+                                    <RatingIndicator id="riLd5" maxValue="10" value="8.1" iconSize="14px" editable="false"/>
+                                    <ObjectStatus id="osLd5Total" text="65" state="Warning"/>
+                                </cells>
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                </Panel>
+
+            </VBox>
+        </content>
+    </Page>
+
+</mvc:View>

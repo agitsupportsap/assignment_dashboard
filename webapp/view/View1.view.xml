@@ -1,0 +1,246 @@
+<mvc:View
+    controllerName="com.ztkt.assignment.controller.View1"
+    xmlns="sap.m"
+    xmlns:l="sap.ui.layout"
+    xmlns:core="sap.ui.core"
+    xmlns:mvc="sap.ui.core.mvc"
+    displayBlock="true">
+
+    <Page id="pageMain" showHeader="false" backgroundDesign="Solid">
+        <content>
+            <VBox id="vbMain" class="dashboardWrapper">
+
+                <!-- ═══ KPI TILES ROW ═══ -->
+                <l:Grid id="gridKpi"
+                    defaultSpan="L3 M6 S12"
+                    hSpacing="1"
+                    vSpacing="0"
+                    class="kpiGrid">
+
+                    <VBox id="kpiCard1" class="kpiCard">
+                        <Label id="kpiLbl1" text="Ongoing Tasks" class="kpiCardLabel"/>
+                        <Text id="kpiSub1" text="active assignments" class="kpiCardSub"/>
+                        <ObjectStatus id="kpiVal1" text="42" state="Success" class="kpiCardValue"/>
+                    </VBox>
+
+                    <VBox id="kpiCard2" class="kpiCard">
+                        <Label id="kpiLbl2" text="Pending" class="kpiCardLabel"/>
+                        <Text id="kpiSub2" text="awaiting action" class="kpiCardSub"/>
+                        <ObjectStatus id="kpiVal2" text="17" state="Warning" class="kpiCardValue"/>
+                    </VBox>
+
+                    <VBox id="kpiCard3" class="kpiCard">
+                        <Label id="kpiLbl3" text="Standby" class="kpiCardLabel"/>
+                        <Text id="kpiSub3" text="people available" class="kpiCardSub"/>
+                        <ObjectStatus id="kpiVal3" text="5" state="Success" class="kpiCardValue"/>
+                    </VBox>
+
+                    <VBox id="kpiCard4" class="kpiCard">
+                        <Label id="kpiLbl4" text="Overdue" class="kpiCardLabel"/>
+                        <Text id="kpiSub4" text="past due date" class="kpiCardSub"/>
+                        <ObjectStatus id="kpiVal4" text="3" state="Error" class="kpiCardValue"/>
+                    </VBox>
+
+                </l:Grid>
+
+                <!-- ═══ MAIN CONTENT GRID ═══ -->
+                <l:Grid id="gridMain" hSpacing="1" vSpacing="0" class="mainGrid">
+
+                    <!-- ─── LEFT COLUMN ─── -->
+                    <VBox id="vbLeft" class="leftColumn">
+                        <layoutData>
+                            <l:GridData id="gdLeft" span="L8 M8 S12"/>
+                        </layoutData>
+
+                        <!-- Support & CR side by side -->
+                        <l:Grid id="gridAssignments"
+                            defaultSpan="L6 M6 S12"
+                            hSpacing="1"
+                            vSpacing="0"
+                            class="sapUiSmallMarginBottom">
+
+                            <Panel id="panelSupport" headerText="Support Assignments" width="100%">
+<Table id="tblSupport"
+    inset="false"
+    fixedLayout="false"
+    width="100%"
+    items="{
+        path: '/TicketSet',
+        filters: [
+            {path: 'Type', operator: 'EQ', value1: 'SUP'},
+            {path: 'Status', operator: 'EQ', value1: 'AS'}
+        ]
+    }">
+    <columns>
+        <Column id="colSupName">
+            <Text id="txtSupName" text="Name (Module)"/>
+        </Column>
+        <Column id="colSupTasks" hAlign="Center" width="65px">
+            <Text id="txtSupTasks" text="Tasks"/>
+        </Column>
+        <Column id="colSupCust">
+            <Text id="txtSupCust" text="Customer"/>
+        </Column>
+    </columns>
+    <items>
+        <ColumnListItem id="cliSupTemplate">
+            <cells>
+                <Text id="txtSupNameTpl" text="{ConsId} ({ModuleId})"/>
+                <ObjectStatus id="osSupTasksTpl" text="1" state="Information" inverted="true"/>
+                <Text id="txtSupCustTpl" text="{CustCode}"/>
+            </cells>
+        </ColumnListItem>
+    </items>
+</Table>
+                            </Panel>
+
+                            <Panel id="panelCR" headerText="Change Request Assignments" width="100%">
+<Table id="tblCR"
+    inset="false"
+    fixedLayout="false"
+    width="100%"
+    items="{
+        path: '/TicketSet',
+        filters: [
+            {path: 'Type', operator: 'EQ', value1: 'CR'},
+            {path: 'Status', operator: 'NE', value1: 'NW'},
+            {path: 'Status', operator: 'NE', value1: 'CL'}
+        ]
+    }">
+    <columns>
+        <Column id="colCRName">
+            <Text id="txtCRName" text="Name (Module)"/>
+        </Column>
+        <Column id="colCRTasks" hAlign="Center" width="65px">
+            <Text id="txtCRTasks" text="Tasks"/>
+        </Column>
+        <Column id="colCRCust">
+            <Text id="txtCRCust" text="Customer"/>
+        </Column>
+    </columns>
+    <items>
+        <ColumnListItem id="cliCRTemplate">
+            <cells>
+                <Text id="txtCRNameTpl" text="{ConsId} ({ModuleId})"/>
+                <ObjectStatus id="osCRTasksTpl" text="1" state="Information" inverted="true"/>
+                <Text id="txtCRCustTpl" text="{CustCode}"/>
+            </cells>
+        </ColumnListItem>
+    </items>
+</Table>
+                            </Panel>
+
+                        </l:Grid>
+
+                        <!-- Backlog Full Width -->
+                        <Panel id="panelBacklog" width="100%">
+                            <headerToolbar>
+                                <Toolbar id="tbBacklog">
+                                    <Title id="titleBacklog" text="Backlog (Unassigned)"/>
+                                    <ToolbarSpacer id="tsBacklog"/>
+                                    <ObjectStatus id="osBacklogAlert"
+                                        text="6 tickets - consultants full"
+                                        state="Error"
+                                        icon="sap-icon://alert"/>
+                                </Toolbar>
+                            </headerToolbar>
+<Table id="tblBacklog"
+    inset="false"
+    fixedLayout="false"
+    width="100%"
+    items="{
+        path: '/TicketSet',
+        filters: [
+            {path: 'Status', operator: 'EQ', value1: 'NW'}
+        ]
+    }">
+    <columns>
+        <Column id="colBLType" width="60px">
+            <Text id="txtBLType" text="Type"/>
+        </Column>
+        <Column id="colBLId" width="90px">
+            <Text id="txtBLId" text="ID"/>
+        </Column>
+        <Column id="colBLTitle">
+            <Text id="txtBLTitle" text="Title"/>
+        </Column>
+        <Column id="colBLCust" width="90px">
+            <Text id="txtBLCust" text="Customer"/>
+        </Column>
+        <Column id="colBLPrio" width="80px">
+            <Text id="txtBLPrio" text="Priority"/>
+        </Column>
+    </columns>
+    <items>
+        <ColumnListItem id="cliBLTemplate">
+            <cells>
+                <ObjectStatus id="osBLType" text="{Type}" state="Information" inverted="true"/>
+                <Link id="lnkBLId" text="{TicketId}"/>
+                <Text id="txtBLTitle2" text="{Title}"/>
+                <Text id="txtBLCust2" text="{CustCode}"/>
+                <ObjectStatus
+                    id="osBLPrio"
+                    text="{Priority}"
+                    state="{= ${Priority} === 'H' ? 'Error' : ${Priority} === 'M' ? 'Warning' : 'Success' }"/>
+            </cells>
+        </ColumnListItem>
+    </items>
+</Table>
+                        </Panel>
+
+                    </VBox>
+
+                    <!-- ─── RIGHT COLUMN ─── -->
+                    <VBox id="vbRight" class="rightColumn">
+                        <layoutData>
+                            <l:GridData id="gdRight" span="L4 M4 S12"/>
+                        </layoutData>
+
+                        <Panel id="panelNewTickets" width="100%" class="sapUiSmallMarginBottom">
+                            <headerToolbar>
+                                <Toolbar id="tbNewTickets">
+                                    <Title id="titleNewTickets" text="New Tickets Today"/>
+                                    <ToolbarSpacer id="tsNewTickets"/>
+                                    <ObjectStatus id="osNewTicketsCount" text="4 new" state="Information"/>
+                                </Toolbar>
+                            </headerToolbar>
+                           <List id="lstNewTickets"
+    items="{
+        path: '/TicketSet',
+        sorter: { path: 'CreatedAt', descending: true },
+        length: 4
+    }">
+    <StandardListItem id="sliNewTpl"
+        title="{TicketId}"
+        description="{Title} - {CustCode}"
+        info=""
+        icon="{= ${Type} === 'CR' ? 'sap-icon://request' : 'sap-icon://message-information' }"
+        iconInset="false"/>
+</List>
+                        </Panel>
+
+                        <Panel id="panelStandby" headerText="Standby Team" width="100%">
+<List id="lstStandby"
+    items="{
+        path: '/ConsultantSet',
+        filters: [
+            {path: 'Status', operator: 'EQ', value1: 'A'}
+        ]
+    }">
+    <StandardListItem id="sliStandbyTpl"
+        title="{Name}"
+        description="{ModuleId}"
+        info="Available"
+        infoState="Success"/>
+</List>
+                        </Panel>
+
+                    </VBox>
+
+                </l:Grid>
+
+            </VBox>
+        </content>
+    </Page>
+
+</mvc:View>
