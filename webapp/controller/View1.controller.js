@@ -1,18 +1,13 @@
-// ═══════════════════════════════════════════
-// Tambahkan ke View1.controller.js — di onInit (paling akhir)
-// dan setelah _loadConsultants/_loadTickets selesai
-// ═══════════════════════════════════════════
-
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
     "sap/ui/model/json/JSONModel",
     "sap/ui/model/Filter",
-    "sap/ui/model/FilterOperator"
-], function (Controller, JSONModel, Filter, FilterOperator) {
+    "sap/ui/model/FilterOperator",
+    "sap/ui/model/Sorter"
+], function (Controller, JSONModel, Filter, FilterOperator, Sorter) {
     "use strict";
 
     var STATUS_LABEL = { NW: "New", AS: "Assigned", IP: "In Progress", PD: "Pending", CL: "Closed" };
-    var STATUS_STATE = { NW: "None", AS: "Information", IP: "Success", PD: "Warning", CL: "None" };
     var PRIORITY_LABEL = { H: "High", M: "Medium", L: "Low" };
     var REFRESH_INTERVAL = 60000;
 
@@ -20,6 +15,7 @@ sap.ui.define([
 
         _consultantMap: {},
         _refreshTimer: null,
+        _oNewTpl: null,
 
         onInit: function () {
             var oKpi = new JSONModel({
@@ -29,8 +25,9 @@ sap.ui.define([
                 newToday: 0
             });
             this.getView().setModel(oKpi, "kpi");
+            this.getView().setModel(new JSONModel({ items: [] }), "standbyModel");
 
-            this._applyStatusFilters();
+            this._bindNewToday();
             this._loadAll();
 
             this._refreshTimer = setInterval(function () {
@@ -38,78 +35,100 @@ sap.ui.define([
             }.bind(this), REFRESH_INTERVAL);
         },
 
-        // ═══ Apply status filter (AS, IP, PD) ke tabel Support & CR ═══
-        _applyStatusFilters: function () {
-            var oFilterActive = new Filter({
-                filters: [
-                    new Filter("Status", FilterOperator.EQ, "AS"),
-                    new Filter("Status", FilterOperator.EQ, "IP"),
-                    new Filter("Status", FilterOperator.EQ, "PD")
-                ],
-                and: false   // OR antar status
-            });
-
-            // Support: TYPE = SUP AND Status IN (AS, IP, PD)
-            var oSupFilter = new Filter({
-                filters: [
-                    new Filter("Type", FilterOperator.EQ, "SUP"),
-                    oFilterActive
-                ],
-                and: true
-            });
-            var tblS = this.byId("tblSupport");
-            if (tblS && tblS.getBinding("items")) {
-                tblS.getBinding("items").filter([oSupFilter]);
-            }
-
-            // CR: TYPE = CR AND Status IN (AS, IP, PD)
-            var oCrFilter = new Filter({
-                filters: [
-                    new Filter("Type", FilterOperator.EQ, "CR"),
-                    oFilterActive
-                ],
-                and: true
-            });
-            var tblC = this.byId("tblCR");
-            if (tblC && tblC.getBinding("items")) {
-                tblC.getBinding("items").filter([oCrFilter]);
-            }
-        },
-
         onExit: function () {
             if (this._refreshTimer) { clearInterval(this._refreshTimer); this._refreshTimer = null; }
         },
 
-        _loadAll: function () {
-            this._loadConsultants();
-            this._loadTickets();
-            this._refreshTables();
-            // Re-apply filter setelah refresh
-            this._applyStatusFilters();
+        // ═══ New Tickets Today — filter dinamis CreatedAt >= today 00:00 ═══
+        _bindNewToday: function () {
+            var oList = this.byId("lstNewTickets");
+            if (!oList) { return; }
+
+            // simpan template dari XML sekali (cliNewTpl)
+            if (!this._oNewTpl) {
+                var oBI = oList.getBindingInfo("items");
+                if (oBI && oBI.template) {
+                    this._oNewTpl = oBI.template;
+                } else {
+                    var aItems = oList.getItems();
+                    if (aItems.length) {
+                        this._oNewTpl = aItems[0].clone();
+                    }
+                }
+            }
+            if (!this._oNewTpl) { return; }
+
+            var d = new Date();
+            d.setHours(0, 0, 0, 0);
+
+            oList.bindItems({
+                path: "/TicketSet",
+                filters: [ new Filter("CreatedAt", FilterOperator.GE, d) ],
+                sorter: new Sorter("CreatedAt", true),
+                template: this._oNewTpl,
+                templateShareable: true
+            });
         },
 
-        _refreshTables: function () {
-            var ids = ["tblSupport", "tblCR", "tblBacklog", "lstNewTickets", "lstStandby"];
+        _loadAll: function () {
+            this._loadConsultantsAndStandby();
+            this._loadTickets();
+            this._refreshStaticTables();
+        },
+
+        _refreshStaticTables: function () {
+            var ids = ["tblSupport", "tblCR", "tblPending", "tblBacklog"];
             ids.forEach(function (id) {
                 var ctrl = this.byId(id);
                 if (ctrl && ctrl.getBinding("items")) {
                     ctrl.getBinding("items").refresh(true);
                 }
             }.bind(this));
+            this._bindNewToday();
         },
 
-        _loadConsultants: function () {
+        // ═══ Standby = consultant aktif yang TIDAK punya ticket AS/IP/PD ═══
+        _loadConsultantsAndStandby: function () {
             var oModel = this.getOwnerComponent().getModel();
             var oKpi = this.getView().getModel("kpi");
+            var oStandby = this.getView().getModel("standbyModel");
             var that = this;
+
             oModel.read("/ConsultantSet", {
-                success: function (oData) {
-                    var iStandby = 0;
-                    oData.results.forEach(function (c) {
+                success: function (oConsData) {
+                    var aActiveCons = [];
+                    oConsData.results.forEach(function (c) {
                         that._consultantMap[c.ConsId] = c.Name;
-                        if (c.Status === "A") iStandby++;
+                        if (c.Status === "A") { aActiveCons.push(c); }
                     });
-                    oKpi.setProperty("/standby", iStandby);
+
+                    oModel.read("/TicketSet", {
+                        urlParameters: {
+                            "$filter": "Status eq 'AS' or Status eq 'IP' or Status eq 'PD'",
+                            "$select": "ConsId,Status",
+                            "$top": "5000"
+                        },
+                        success: function (oTk) {
+                            var oBusy = {};
+                            (oTk.results || []).forEach(function (t) {
+                                if (t.ConsId) { oBusy[t.ConsId] = true; }
+                            });
+
+                            var aStandby = aActiveCons
+                                .filter(function (c) { return !oBusy[c.ConsId]; })
+                                .map(function (c) {
+                                    return {
+                                        consId:   c.ConsId,
+                                        name:     c.Name,
+                                        module:   c.ModuleId,
+                                        initials: that.formatInitials(c.Name)
+                                    };
+                                });
+
+                            oStandby.setProperty("/items", aStandby);
+                            oKpi.setProperty("/standby", aStandby.length);
+                        }
+                    });
                 }
             });
         },
@@ -127,12 +146,12 @@ sap.ui.define([
 
                     oData.results.forEach(function (t) {
                         var s = t.Status;
-                        var bActive = s === "AS" || s === "IP" || s === "PD";
+                        var bActiveAssign = s === "AS" || s === "IP";
                         if (s === "IP" || s === "AS") iOngoing++;
                         if (s === "PD") iPending++;
                         if (s === "NW") iBacklog++;
-                        if (bActive && t.Type === "SUP") iSupCount++;
-                        if (bActive && t.Type === "CR") iCRCount++;
+                        if (bActiveAssign && t.Type === "SUP") iSupCount++;
+                        if (bActiveAssign && t.Type === "CR") iCRCount++;
                         if (t.CreatedAt) {
                             var d = new Date(t.CreatedAt);
                             d.setHours(0, 0, 0, 0);
@@ -156,18 +175,45 @@ sap.ui.define([
             return (sModuleId || "") + " - " + (this._consultantMap[sConsId] || sConsId);
         },
         formatStatusLabel: function (s) { return STATUS_LABEL[s] || s; },
-        formatInitials: function (sName) {
-    if (!sName) { return "?"; }
-    var aParts = sName.trim().split(/\s+/);
-    var sInit = aParts[0].charAt(0);
-    if (aParts.length > 1) { sInit += aParts[aParts.length - 1].charAt(0); }
-    return sInit.toUpperCase();
-},
-        formatStatusState: function (s) { return STATUS_STATE[s] || "None"; },
         formatPriorityLabel: function (p) { return PRIORITY_LABEL[p] || p; },
-        onSideNavButtonPress: function () { },
-        onItemSelect: function (oEvent) {
-            console.log("Menu:", oEvent.getParameter("item").getKey());
+
+        formatInitials: function (sName) {
+            if (!sName) { return "?"; }
+            var aParts = sName.trim().split(/\s+/);
+            var sInit = aParts[0].charAt(0);
+            if (aParts.length > 1) { sInit += aParts[aParts.length - 1].charAt(0); }
+            return sInit.toUpperCase();
+        },
+
+        formatStatusIcon: function (s) {
+            switch (s) {
+                case "AS": return "sap-icon://inbox";
+                case "IP": return "sap-icon://busy";
+                case "PD": return "sap-icon://pause";
+                default:   return "sap-icon://circle-task";
+            }
+        },
+        formatStatusColor: function (s) {
+            switch (s) {
+                case "AS": return "#0284c7";
+                case "IP": return "#16a34a";
+                case "PD": return "#d97706";
+                default:   return "#7b8794";
+            }
+        },
+
+        formatSlaText: function (sStatus, sEstimate, nRemaining) {
+            if (sStatus !== "IP") { return "—"; }
+            if (!sEstimate) { return "n/a"; }
+            var nHrs = parseFloat(nRemaining || 0);
+            if (sEstimate === "WITHIN") {
+                return "Within · " + nHrs.toFixed(1) + "h";
+            }
+            return "Breach · " + Math.abs(nHrs).toFixed(1) + "h over";
+        },
+        formatSlaState: function (sStatus, sEstimate) {
+            if (sStatus !== "IP" || !sEstimate) { return "None"; }
+            return sEstimate === "WITHIN" ? "Success" : "Error";
         }
 
     });

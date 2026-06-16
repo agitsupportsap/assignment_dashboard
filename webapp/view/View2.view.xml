@@ -4,6 +4,7 @@
     xmlns:l="sap.ui.layout"
     xmlns:core="sap.ui.core"
     xmlns:mvc="sap.ui.core.mvc"
+    xmlns:micro="sap.suite.ui.microchart"
     displayBlock="true">
 
     <Page id="pagePerf" showHeader="false" backgroundDesign="Solid">
@@ -95,16 +96,91 @@
                                     <ObjectStatus id="osCustSup" text="{custModel>sup}" state="Information" inverted="true"/>
                                     <ObjectStatus id="osCustCr" text="{custModel>cr}" state="Warning" inverted="true"/>
                                     <Text id="txtCustTotalCell" text="{custModel>total}" class="leaderTickets"/>
-                                    <ProgressIndicator id="piCust"
-                                        percentValue="{custModel>pct}"
-                                        displayValue="{custModel>total}"
-                                        state="Information"/>
+<ProgressIndicator id="piCust"
+    percentValue="{custModel>pct}"
+    displayValue="{custModel>pctLabel}"
+    state="Information"/>
                                 </cells>
                             </ColumnListItem>
                         </items>
                     </Table>
                 </Panel>
-
+<l:Grid id="gridAnalytics" defaultSpan="L6 M12 S12" hSpacing="1" vSpacing="0" class="sapUiSmallMarginBottom">
+ 
+    <Panel id="panelModule" width="100%" class="dashboardPanel">
+        <headerToolbar>
+            <Toolbar id="tbModule" class="dashboardPanelToolbar">
+                <HBox id="hbModDot" class="panelDot panelDotIndigo"/>
+                <Title id="titleModule" text="Tickets per Module" level="H3"/>
+                <ToolbarSpacer id="tsModule"/>
+                <Text id="subModule" text="busiest first" class="kpiCardSub"/>
+            </Toolbar>
+        </headerToolbar>
+        <VBox id="vbModuleChart" class="chartPad">
+            <micro:ColumnMicroChart id="cmcModule"
+                size="Responsive"
+                height="180px"
+                columns="{moduleModel>/items}">
+                <micro:columns>
+                    <micro:ColumnMicroChartData
+                        label="{moduleModel>module}"
+                        value="{moduleModel>total}"
+                        color="{moduleModel>color}"/>
+                </micro:columns>
+            </micro:ColumnMicroChart>
+            <!-- legend / detail list bawah chart -->
+            <HBox id="hbModLegend" wrap="Wrap" class="chartLegend"
+                items="{moduleModel>/items}">
+                <HBox class="legendItem" alignItems="Center">
+                    <Text text="{moduleModel>module}" class="legendLabel"/>
+                    <Text text="{moduleModel>total}" class="legendValue"/>
+                </HBox>
+            </HBox>
+        </VBox>
+    </Panel>
+ 
+    <!-- ═══ WORKLOAD BALANCE — ticket aktif per consultant ═══ -->
+    <Panel id="panelWorkload" width="100%" class="dashboardPanel">
+        <headerToolbar>
+            <Toolbar id="tbWorkload" class="dashboardPanelToolbar">
+                <HBox id="hbWLDot" class="panelDot panelDotRed"/>
+                <Title id="titleWorkload" text="Workload Balance" level="H3"/>
+                <ToolbarSpacer id="tsWorkload"/>
+                <Text id="subWorkload" text="active tickets per consultant" class="kpiCardSub"/>
+            </Toolbar>
+        </headerToolbar>
+        <Table id="tblWorkload" inset="false" fixedLayout="false" width="100%"
+            sticky="ColumnHeaders" alternateRowColors="false"
+            items="{ path: 'workloadModel>/items' }">
+            <columns>
+                <Column id="colWLName"><Text id="txtWLName" text="Consultant"/></Column>
+                <Column id="colWLActive" hAlign="Center" width="70px"><Text id="txtWLActive" text="Active"/></Column>
+                <Column id="colWLBar"><Text id="txtWLBar" text="Load"/></Column>
+                <Column id="colWLState" hAlign="Center" width="90px" minScreenWidth="Tablet" demandPopin="true"><Text id="txtWLState" text="Status"/></Column>
+            </columns>
+            <items>
+                <ColumnListItem id="cliWLTpl" vAlign="Middle">
+                    <cells>
+                        <HBox id="hbWLName" alignItems="Center">
+                            <Text id="txtWLInit" text="{workloadModel>initials}" class="initialsChip"/>
+                            <Text id="txtWLNameCell" text="{workloadModel>display}" class="leaderName"/>
+                        </HBox>
+                        <Text id="txtWLActiveCell" text="{workloadModel>active}" class="leaderTickets"/>
+                        <ProgressIndicator id="piWL"
+                            percentValue="{workloadModel>pct}"
+                            displayValue="{workloadModel>active}"
+                            state="{workloadModel>state}"/>
+                        <ObjectStatus id="osWLState"
+                            text="{workloadModel>loadLabel}"
+                            state="{workloadModel>state}"
+                            inverted="true"/>
+                    </cells>
+                </ColumnListItem>
+            </items>
+        </Table>
+    </Panel>
+ 
+</l:Grid>
                 <!-- ═══ LEADERBOARD ═══ -->
                 <Panel id="panelLeader" width="100%" class="dashboardPanel">
                     <headerToolbar>

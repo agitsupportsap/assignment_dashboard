@@ -51,7 +51,7 @@
 
                 </l:Grid>
 
-                <!-- ═══ SUPPORT + CR ═══ -->
+                <!-- ═══ SUPPORT + CR (AS, IP only; sort: oldest first) ═══ -->
                 <l:Grid id="gridAssignments" defaultSpan="L6 M12 S12" hSpacing="1" vSpacing="0" class="sapUiSmallMarginBottom">
 
                     <Panel id="panelSupport" width="100%" class="dashboardPanel">
@@ -69,29 +69,40 @@
                                 path: '/TicketSet',
                                 filters: [
                                     {path: 'Type', operator: 'EQ', value1: 'SUP'},
-                                    {path: 'Status', operator: 'NE', value1: 'NW'},
-                                    {path: 'Status', operator: 'NE', value1: 'CL'}
+                                    {
+                                        filters: [
+                                            {path: 'Status', operator: 'EQ', value1: 'AS'},
+                                            {path: 'Status', operator: 'EQ', value1: 'IP'}
+                                        ],
+                                        and: false
+                                    }
                                 ],
-                                sorter: { path: 'CreatedAt', descending: true }
+                                sorter: { path: 'CreatedAt', descending: false }
                             }">
                             <columns>
+                                <Column id="colSupState" width="44px" hAlign="Center"><Text id="txtSupState" text=""/></Column>
                                 <Column id="colSupTicket" width="92px"><Text id="txtSupTicket" text="Ticket"/></Column>
                                 <Column id="colSupName" width="150px" minScreenWidth="Phone" demandPopin="true"><Text id="txtSupName" text="Consultant"/></Column>
                                 <Column id="colSupDesc" minScreenWidth="Tablet" demandPopin="true"><Text id="txtSupDesc" text="Description"/></Column>
-                                <Column id="colSupStatus" hAlign="Center" width="90px"><Text id="txtSupStatus" text="Status"/></Column>
-                                <Column id="colSupCust" width="100px" hAlign="Center" minScreenWidth="Tablet" demandPopin="true"><Text id="txtSupCust" text="Cust"/></Column>
+                                <Column id="colSupSla" hAlign="Center" width="120px"><Text id="txtSupSla" text="SLA"/></Column>
+                                <Column id="colSupCust" width="86px" hAlign="Center" minScreenWidth="Tablet" demandPopin="true"><Text id="txtSupCust" text="Cust"/></Column>
                             </columns>
                             <items>
                                 <ColumnListItem id="cliSupTemplate" vAlign="Top">
                                     <cells>
+                                        <core:Icon id="icSupState"
+                                            src="{path:'Status', formatter:'.formatStatusIcon'}"
+                                            color="{path:'Status', formatter:'.formatStatusColor'}"
+                                            tooltip="{path:'Status', formatter:'.formatStatusLabel'}"
+                                            class="statusDotIcon"/>
                                         <Link id="lnkSupTicket" text="{TicketId}" emphasized="true"/>
                                         <Text id="txtSupNameTpl"
                                             text="{parts: [{path: 'ConsId'}, {path: 'ModuleId'}], formatter: '.formatConsName'}"
                                             class="cellConsName"/>
                                         <Text id="txtSupDescTpl" text="{Description}" wrapping="true" maxLines="2" class="tableDescCell"/>
-                                        <ObjectStatus id="osSupStatusTpl"
-                                            text="{path:'Status', formatter:'.formatStatusLabel'}"
-                                            state="{path:'Status', formatter:'.formatStatusState'}"
+                                        <ObjectStatus id="osSupSlaTpl"
+                                            text="{parts:[{path:'Status'},{path:'SlaEstimate'},{path:'SlaRemainingHrs'}], formatter:'.formatSlaText'}"
+                                            state="{parts:[{path:'Status'},{path:'SlaEstimate'}], formatter:'.formatSlaState'}"
                                             inverted="true"/>
                                         <Text id="txtSupCustTpl" text="{CustCode}"/>
                                     </cells>
@@ -115,29 +126,40 @@
                                 path: '/TicketSet',
                                 filters: [
                                     {path: 'Type', operator: 'EQ', value1: 'CR'},
-                                    {path: 'Status', operator: 'NE', value1: 'NW'},
-                                    {path: 'Status', operator: 'NE', value1: 'CL'}
+                                    {
+                                        filters: [
+                                            {path: 'Status', operator: 'EQ', value1: 'AS'},
+                                            {path: 'Status', operator: 'EQ', value1: 'IP'}
+                                        ],
+                                        and: false
+                                    }
                                 ],
-                                sorter: { path: 'CreatedAt', descending: true }
+                                sorter: { path: 'CreatedAt', descending: false }
                             }">
                             <columns>
+                                <Column id="colCRState" width="44px" hAlign="Center"><Text id="txtCRState" text=""/></Column>
                                 <Column id="colCRTicket" width="92px"><Text id="txtCRTicket" text="Ticket"/></Column>
                                 <Column id="colCRName" width="150px" minScreenWidth="Phone" demandPopin="true"><Text id="txtCRName" text="Consultant"/></Column>
                                 <Column id="colCRDesc" minScreenWidth="Tablet" demandPopin="true"><Text id="txtCRDesc" text="Description"/></Column>
-                                <Column id="colCRStatus" hAlign="Center" width="90px"><Text id="txtCRStatus" text="Status"/></Column>
-                                <Column id="colCRCust" width="100px" hAlign="Center" minScreenWidth="Tablet" demandPopin="true"><Text id="txtCRCust" text="Cust"/></Column>
+                                <Column id="colCRSla" hAlign="Center" width="120px"><Text id="txtCRSla" text="SLA"/></Column>
+                                <Column id="colCRCust" width="86px" hAlign="Center" minScreenWidth="Tablet" demandPopin="true"><Text id="txtCRCust" text="Cust"/></Column>
                             </columns>
                             <items>
                                 <ColumnListItem id="cliCRTemplate" vAlign="Top">
                                     <cells>
+                                        <core:Icon id="icCRState"
+                                            src="{path:'Status', formatter:'.formatStatusIcon'}"
+                                            color="{path:'Status', formatter:'.formatStatusColor'}"
+                                            tooltip="{path:'Status', formatter:'.formatStatusLabel'}"
+                                            class="statusDotIcon"/>
                                         <Link id="lnkCRTicket" text="{TicketId}" emphasized="true"/>
                                         <Text id="txtCRNameTpl"
                                             text="{parts: [{path: 'ConsId'}, {path: 'ModuleId'}], formatter: '.formatConsName'}"
                                             class="cellConsName"/>
                                         <Text id="txtCRDescTpl" text="{Description}" wrapping="true" maxLines="2" class="tableDescCell"/>
-                                        <ObjectStatus id="osCRStatusTpl"
-                                            text="{path:'Status', formatter:'.formatStatusLabel'}"
-                                            state="{path:'Status', formatter:'.formatStatusState'}"
+                                        <ObjectStatus id="osCRSlaTpl"
+                                            text="{parts:[{path:'Status'},{path:'SlaEstimate'},{path:'SlaRemainingHrs'}], formatter:'.formatSlaText'}"
+                                            state="{parts:[{path:'Status'},{path:'SlaEstimate'}], formatter:'.formatSlaState'}"
                                             inverted="true"/>
                                         <Text id="txtCRCustTpl" text="{CustCode}"/>
                                     </cells>
@@ -147,6 +169,48 @@
                     </Panel>
 
                 </l:Grid>
+
+                <!-- ═══ PENDING BUCKET ═══ -->
+                <Panel id="panelPending" width="100%" class="sapUiSmallMarginBottom dashboardPanel">
+                    <headerToolbar>
+                        <Toolbar id="tbPending" class="dashboardPanelToolbar">
+                            <HBox id="hbPDDot" class="panelDot panelDotAmber"/>
+                            <Title id="titlePending" text="Pending Bucket" level="H3"/>
+                            <ToolbarSpacer id="tsPending"/>
+                            <ObjectStatus id="osPendingCount" text="{kpi>/pending} pending" state="Warning" class="panelChip"/>
+                        </Toolbar>
+                    </headerToolbar>
+                    <Table id="tblPending" inset="false" fixedLayout="false" width="100%"
+                        sticky="ColumnHeaders" alternateRowColors="false"
+                        items="{
+                            path: '/TicketSet',
+                            filters: [{path: 'Status', operator: 'EQ', value1: 'PD'}],
+                            sorter: { path: 'CreatedAt', descending: false }
+                        }">
+                        <columns>
+                            <Column id="colPDTicket" width="92px"><Text id="txtPDTicket" text="Ticket"/></Column>
+                            <Column id="colPDType" width="70px" hAlign="Center"><Text id="txtPDType" text="Type"/></Column>
+                            <Column id="colPDName" width="150px" minScreenWidth="Phone" demandPopin="true"><Text id="txtPDName" text="Consultant"/></Column>
+                            <Column id="colPDTitle"><Text id="txtPDTitle" text="Title"/></Column>
+                            <Column id="colPDCust" width="86px" hAlign="Center" minScreenWidth="Tablet" demandPopin="true"><Text id="txtPDCust" text="Cust"/></Column>
+                        </columns>
+                        <items>
+                            <ColumnListItem id="cliPDTemplate" vAlign="Top">
+                                <cells>
+                                    <Link id="lnkPDTicket" text="{TicketId}" emphasized="true"/>
+                                    <ObjectStatus id="osPDType" text="{Type}"
+                                        state="{= ${Type} === 'CR' ? 'Warning' : 'Information' }"
+                                        inverted="true"/>
+                                    <Text id="txtPDNameTpl"
+                                        text="{parts: [{path: 'ConsId'}, {path: 'ModuleId'}], formatter: '.formatConsName'}"
+                                        class="cellConsName"/>
+                                    <Text id="txtPDTitleTpl" text="{Title}" wrapping="true" maxLines="2" class="tableDescCell"/>
+                                    <Text id="txtPDCustTpl" text="{CustCode}"/>
+                                </cells>
+                            </ColumnListItem>
+                        </items>
+                    </Table>
+                </Panel>
 
                 <!-- ═══ BACKLOG ═══ -->
                 <Panel id="panelBacklog" width="100%" class="sapUiSmallMarginBottom dashboardPanel">
@@ -166,7 +230,7 @@
                         items="{
                             path: '/TicketSet',
                             filters: [{path: 'Status', operator: 'EQ', value1: 'NW'}],
-                            sorter: { path: 'CreatedAt', descending: true }
+                            sorter: { path: 'CreatedAt', descending: false }
                         }">
                         <columns>
                             <Column id="colBLId" width="100px"><Text id="txtBLId" text="Ticket No"/></Column>
@@ -196,7 +260,7 @@
                     </Table>
                 </Panel>
 
-                <!-- ═══ NEW + STANDBY ═══ -->
+                <!-- ═══ NEW TODAY + STANDBY ═══ -->
                 <l:Grid id="gridBottom" defaultSpan="L6 M12 S12" hSpacing="1" vSpacing="0">
 
                     <Panel id="panelNewTickets" width="100%" class="dashboardPanel">
@@ -209,12 +273,8 @@
                             </Toolbar>
                         </headerToolbar>
                         <ScrollContainer id="scNewTickets" height="280px" vertical="true" width="100%">
-                            <List id="lstNewTickets" showSeparators="None"
-                                items="{
-                                    path: '/TicketSet',
-                                    sorter: { path: 'CreatedAt', descending: true },
-                                    length: 8
-                                }">
+                            <!-- items di-bind dari controller (filter today dinamis) -->
+                            <List id="lstNewTickets" showSeparators="None">
                                 <CustomListItem id="cliNewTpl">
                                     <HBox id="hbNew" alignItems="Center" width="100%" class="miniItem">
                                         <ObjectStatus id="osNewType" text="{Type}"
@@ -240,22 +300,19 @@
                             </Toolbar>
                         </headerToolbar>
                         <ScrollContainer id="scStandby" height="280px" vertical="true" width="100%">
-                            <List id="lstStandby" showSeparators="None"
-                                items="{
-                                    path: '/ConsultantSet',
-                                    filters: [{path: 'Status', operator: 'EQ', value1: 'A'}]
-                                }">
-                                <CustomListItem id="cliStandbyTpl">
-                                    <HBox id="hbStandby" alignItems="Center" width="100%" class="miniItem">
-                                        <Text id="txtStandbyInit" text="{path:'Name', formatter:'.formatInitials'}" class="initialsChip"/>
-                                        <Text id="txtStandbyName" text="{Name}" wrapping="false" class="miniItemTitle">
-                                            <layoutData><FlexItemData id="fidStandby" growFactor="1" shrinkFactor="1" minWidth="0"/></layoutData>
-                                        </Text>
-                                        <Text id="txtStandbyMod" text="{ModuleId}" class="miniItemMod"/>
-                                        <ObjectStatus id="osStandbyAvail" text="Available" state="Success" class="miniItemStatus"/>
-                                    </HBox>
-                                </CustomListItem>
-                            </List>
+<List id="lstStandby" showSeparators="None"
+    items="{ path: 'standbyModel>/items' }">
+    <CustomListItem id="cliStandbyTpl">
+        <HBox id="hbStandby" alignItems="Center" width="100%" class="miniItem">
+            <Text id="txtStandbyInit" text="{standbyModel>initials}" class="initialsChip"/>
+            <Text id="txtStandbyName" text="{standbyModel>name}" wrapping="false" class="miniItemTitle">
+                <layoutData><FlexItemData id="fidStandby" growFactor="1" shrinkFactor="1" minWidth="0"/></layoutData>
+            </Text>
+            <Text id="txtStandbyMod" text="{standbyModel>module}" class="miniItemMod"/>
+            <ObjectStatus id="osStandbyAvail" text="Available" state="Success" class="miniItemStatus"/>
+        </HBox>
+    </CustomListItem>
+</List>
                         </ScrollContainer>
                     </Panel>
 
