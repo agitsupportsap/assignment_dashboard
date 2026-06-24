@@ -131,16 +131,48 @@ html, body {
    ════════════════════════════════════════════════════════════ */
 .dashboardPanel {
     background: #ffffff !important;
-    border: 1px solid rgba(22, 33, 46, 0.06) !important;
+    border: 1px solid rgba(22, 33, 46, 0.08) !important;
     border-radius: 14px !important;
     box-shadow:
         0 1px 2px rgba(22, 33, 46, 0.04),
-        0 8px 24px -14px rgba(22, 33, 46, 0.10) !important;
+        0 8px 24px -12px rgba(22, 33, 46, 0.10) !important;
     overflow: hidden;
     box-sizing: border-box;
 }
 
 .dashboardPanel .sapMPanelContent { padding: 0 !important; }
+
+/* keep tables/lists transparent so the panel's rounded corners clip cleanly */
+.dashboardPanel .sapMList,
+.dashboardPanel .sapMListTbl,
+.dashboardPanel .sapMListBGTransparent { background: transparent !important; }
+
+/* ── Equal-height side-by-side panels ──
+   l:Grid lays columns out as floats, so a 6-row panel and a 1-row panel
+   end up different heights. Switch each grid row to flex + stretch so the
+   cards in a row share the tallest height. Scoped by id; if the DOM ever
+   differs these rules simply no-op (graceful). */
+#gridAssignments .sapUiRespGridRow,
+#gridBottom .sapUiRespGridRow,
+#gridPerfKpi .sapUiRespGridRow {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: stretch !important;
+    /* row-gap only: spaces the cards when they wrap/stack, without
+       disturbing the horizontal hSpacing gutters */
+    row-gap: 1rem !important;
+}
+#gridAssignments .sapUiRespGridRow > [class*="sapUiRespGridSpan"],
+#gridBottom .sapUiRespGridRow > [class*="sapUiRespGridSpan"],
+#gridPerfKpi .sapUiRespGridRow > [class*="sapUiRespGridSpan"] {
+    display: flex !important;
+}
+#gridAssignments .dashboardPanel,
+#gridBottom .dashboardPanel,
+#gridPerfKpi .dashboardPanel,
+#gridPerfKpi .kpiCard {
+    width: 100% !important;
+}
 
 .dashboardPanelToolbar {
     background: #ffffff !important;
@@ -182,6 +214,14 @@ html, body {
     width: 100% !important;
 }
 
+/* Backlog can hold many unassigned tickets — cap its height and scroll
+   internally so the card stays in proportion with the others. The cap
+   has no effect when only a few rows are present (sizes to content). */
+#tblBacklog {
+    max-height: 22rem;
+    overflow: auto;
+}
+
 .sapMListTbl .sapMListTblHeader {
     background: #f8f9fb !important;
 }
@@ -211,11 +251,13 @@ html, body {
 
 /* status pills */
 .sapMListTbl .sapMObjStatusInverted .sapMObjStatusText {
+    display: inline-block;
     border-radius: 999px !important;
     padding: .125rem .625rem !important;
     font-size: .6875rem !important;
     font-weight: 600 !important;
     letter-spacing: .02em;
+    white-space: nowrap !important;   /* keep "In Progress" on one line */
 }
 
 /* description cell */
@@ -417,6 +459,23 @@ html, body {
     }
 }
 
+    /* status dot icon di tabel Support/CR */
+.statusDotIcon {
+    font-size: 1rem !important;
+    width: 1rem !important;
+    height: 1rem !important;
+}
+
+/* SLA box badge */
+.sapMListTbl .sapMObjStatusInverted .sapMObjStatusText {
+    border-radius: 999px !important;
+    padding: .125rem .5625rem !important;
+    font-size: .65625rem !important;
+    font-weight: 700 !important;
+    letter-spacing: .02em;
+    white-space: nowrap;
+}
+
 /* ════════════════════════════════════════════════════════════
    RESPONSIVE — PHONE  (< 600 px)
    ════════════════════════════════════════════════════════════ */
@@ -492,4 +551,37 @@ html, body {
     #hbFinishedBreakdown.sapMHBox {
         gap: .75rem;
     }
+
 }
+
+.chartPad {
+    padding: 1rem 1.25rem 1.25rem 1.25rem;
+    box-sizing: border-box;
+}
+ 
+/* legend bawah module chart */
+.chartLegend {
+    margin-top: .75rem;
+    gap: .5rem;
+}
+.legendItem {
+    background: #f5f6f8;
+    border-radius: 8px;
+    padding: .25rem .625rem;
+    margin: .1875rem .375rem .1875rem 0;
+}
+.legendLabel.sapMText {
+    font-size: .71875rem !important;
+    font-weight: 600 !important;
+    color: #4a5560 !important;
+    margin-right: .375rem;
+}
+.legendValue.sapMText {
+    font-size: .71875rem !important;
+    font-weight: 800 !important;
+    color: #16212e !important;
+    font-variant-numeric: tabular-nums;
+}
+ 
+/* microchart responsive height guard */
+.sapSuiteCMC { width: 100% !important; }
